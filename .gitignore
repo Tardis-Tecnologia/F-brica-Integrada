@@ -1,0 +1,8 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+server/prisma/dev.db
+server/prisma/dev.db-journal
+F-brica-Integrada

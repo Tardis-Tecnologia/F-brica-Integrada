@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  document  String
+  phone     String?
+  email     String?
+  source    String
+  externalId String?
+  createdAt DateTime @default(now())
+  addresses CustomerAddress[]
+  orders    Order[]
+  receivables Receivable[]
+}
+
+model CustomerAddress {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  type       String
+  label      String?
+  street     String
+  city       String
+  state      String
+  zip        String
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id         String @id @default(cuid())
+  sku        String @unique
+  name       String
+  source     String
+  externalId String?
+  items      OrderItem[]
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  number          String   @unique
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  deliveryAddressId String?
+  source          String
+  externalId      String?
+  status          String
+  total           Float
+  payloadJson     String?
+  syncedAt        DateTime?
+  syncStatus      String   @default("pending")
+  syncError       String?
+  syncAttempts    Int      @default(0)
+  createdAt       DateTime @default(now())
+  items           OrderItem[]
+  steps           TimelineStep[]
+  invoices        Invoice[]
+  shipments       Shipment[]
+  receivables     Receivable[]
+  @@unique([source, externalId])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  qty       Float
+  price     Float
+}
+
+model TimelineStep {
+  id         String    @id @default(cuid())
+  orderId    String
+  order      Order     @relation(fields: [orderId], references: [id])
+  code       String
+  status     String
+  startedAt  DateTime?
+  finishedAt DateTime?
+  owner      String?
+  origin     String
+  slaMinutes Int
+  notes      String?
+}
+
+model Invoice {
+  id         String  @id @default(cuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id])
+  number     String  @unique
+  source     String
+  externalId String?
+}
+
+model Receivable {
+  id             String    @id @default(cuid())
+  customerId     String
+  customer       Customer  @relation(fields: [customerId], references: [id])
+  orderId        String?
+  order          Order?    @relation(fields: [orderId], references: [id])
+  documentNumber String
+  invoiceNumber  String?
+  amount         Float
+  dueDate        DateTime
+  paymentDate    DateTime?
+  status         String
+  paymentMethod  String?
+  externalId     String?
+  source         String
+  collectionLogs CollectionLog[]
+}
+
+model CollectionRule {
+  id          String  @id @default(cuid())
+  offsetDays  Int
+  channel     String
+  template    String
+  audience    String
+  priority    Int
+  active      Boolean @default(true)
+  hourFrom    Int     @default(8)
+  hourTo      Int     @default(20)
+}
+
+model CollectionLog {
+  id            String   @id @default(cuid())
+  receivableId  String
+  receivable    Receivable @relation(fields: [receivableId], references: [id])
+  ruleId        String
+  channel       String
+  status        String
+  createdAt     DateTime @default(now())
+  @@unique([receivableId, ruleId])
+}
+
+model Shipment {
+  id            String  @id @default(cuid())
+  orderId       String
+  order         Order   @relation(fields: [orderId], references: [id])
+  token         String  @unique
+  nfe           String?
+  carrier       String?
+  trackingCode  String?
+  deliveryAddressId String?
+  status        String
+}
+
+model DeliveryRule {
+  id            String  @id @default(cuid())
+  addressId     String
+  requireSlot   Boolean @default(false)
+  hourFrom      Int     @default(8)
+  hourTo        Int     @default(17)
+  weekDays      String  @default("1,2,3,4,5")
+  maxWeightKg   Float?
+  vehicleHint   String?
+  contactName   String?
+  contactPhone  String?
+  notes         String?
+}
+
+model SlaRule {
+  id          String @id @default(cuid())
+  fromStep    String
+  toStep      String
+  slaMinutes  Int
+  severity    String
+  active      Boolean @default(true)
+}
+
+model Alert {
+  id          String   @id @default(cuid())
+  type        String
+  entityType  String
+  entityId    String
+  message     String
+  severity    String
+  ruleId      String?
+  owner       String?
+  status      String   @default("open")
+  createdAt   DateTime @default(now())
+  ackAt       DateTime?
+  resolvedAt  DateTime?
+}
+
+model IntegrationEvent {
+  id         String   @id @default(cuid())
+  source     String
+  externalId String
+  kind       String
+  payload    String?
+  status     String
+  attempts   Int      @default(0)
+  lastError  String?
+  createdAt  DateTime @default(now())
+  @@unique([source, externalId, kind])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  action        String
+  origin        String
+  entityType    String
+  entityId      String
+  beforeJson    String?
+  afterJson     String?
+  actor         String
+  correlationId String
+  createdAt     DateTime @default(now())
+}
+
+model MessageLog {
+  id                String   @id @default(cuid())
+  to                String
+  template          String
+  paramsJson        String
+  status            String
+  providerMessageId String?
+  delivered         Boolean  @default(false)
+  read              Boolean  @default(false)
+  error             String?
+  createdAt         DateTime @default(now())
+}
