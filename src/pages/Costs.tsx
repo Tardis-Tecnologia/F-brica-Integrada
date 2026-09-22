@@ -26,7 +26,7 @@ export function Costs() {
         <article className="kpi">
           <p className="kpi-label">Custo de produção MTD</p>
           <p className="kpi-value">{money(1241180)}</p>
-          <p className="hint">+3,1% por refugo da Linha 2</p>
+          <p className="hint">+3,1% por refugo da Linha Kit</p>
         </article>
         <article className="kpi">
           <p className="kpi-label">Custo médio / un</p>

@@ -19,7 +19,7 @@ export function Production() {
         <article className="kpi">
           <p className="kpi-label">OEE planta</p>
           <p className="kpi-value">74,2%</p>
-          <p className="hint">Linha 2 puxa para baixo</p>
+          <p className="hint">Linha Kit puxa para baixo</p>
         </article>
         <article className="kpi">
           <p className="kpi-label">Eficiência média</p>
@@ -27,7 +27,7 @@ export function Production() {
           <p className="hint">ordens concluídas</p>
         </article>
         <article className="kpi">
-          <p className="kpi-label">Refugo Linha 2</p>
+          <p className="kpi-label">Refugo Linha Kit</p>
           <p className="kpi-value">8,4%</p>
           <p className="hint">+14% em 7 dias</p>
         </article>
@@ -53,16 +53,16 @@ export function Production() {
           <PanelHead kicker="Leitura" title="O que a produção está dizendo" />
           <ul className="read-list">
             <li>
-              <b>Linha 1</b> está saudável. Terminou 4.000 tampas com OEE 86% e tem
-              capacidade para a campanha de 1.200 do Produto A.
+              <b>Linha Toalet</b> está saudável e tem capacidade para a campanha de
+              1.200 kits 10 + suporte.
             </li>
             <li>
-              <b>Linha 2</b> produz o Produto B com desperdício alto. Acelerar volume
-              agora aumenta custo unitário — qualidade primeiro.
+              <b>Linha Kit</b> sela a caixa 24 com desperdício alto. Acelerar volume
+              agora aumenta custo unitário — qualidade da solda primeiro.
             </li>
             <li>
-              <b>Linha 3</b> conclui tubo 75 mm hoje e tem flange nylon em setup.
-              Dá para ampliar OP-2406 para 700 un.
+              <b>Linha EPI</b> concluiu máscara (OEE 86%) e tem luva em setup.
+              Dá para ampliar OP-2406 para 700 caixas.
             </li>
           </ul>
         </Panel>

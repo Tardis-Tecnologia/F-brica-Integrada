@@ -38,13 +38,13 @@ export const needSeeds: NeedSeed[] = [
     baseQty: 500,
     priority: "alta",
     drivers: [
-      "Venda Shopify do Produto A acelerou a reposição",
-      "OP recomendada de 1.200 un A pede 48 kg no BOM",
-      "Linha 2 consome pigmento na Conexão 50 mm",
+      "Venda Tray do Toalet 10 acelerou a reposição",
+      "OP recomendada de 1.200 kits pede 48 kg de filme PE",
+      "Linha Kit consome o mesmo filme na caixa 24",
       "Saldo 180 kg vs. mínimo 250 kg · 4,3 dias de cobertura",
     ],
     insight:
-      "Com base nas vendas e nas ordens de produção atuais, serão necessários 500 kg adicionais de Pigmento preto industrial nos próximos 7 dias. Sem essa compra, a campanha do Produto A e a Linha 2 param.",
+      "Com base nas vendas da loja FLIND e nas ordens atuais, serão necessários 500 kg de filme PE nos próximos 7 dias. Sem essa compra, a campanha do Toalet e a Linha Kit param.",
   },
   {
     id: "need-hdpe",
@@ -52,12 +52,12 @@ export const needSeeds: NeedSeed[] = [
     baseQty: 3200,
     priority: "media",
     drivers: [
-      "Cobertura de resina em 6,7 dias",
-      "Campanha de 1.200 Reservatórios 20 L pede 2.160 kg",
-      "OP-2412 e OP-2408 já consomem HDPE hoje",
+      "Cobertura de gel absorvente em 6,7 dias",
+      "Campanha de 1.200 kits Toalet pede gel extra",
+      "OP-2412 e OP-2408 já consomem gel hoje",
     ],
     insight:
-      "A resina HDPE ainda está acima do mínimo, mas a combinação de consumo diário e a ordem do Produto A estoura a cobertura da semana. Recomendamos 3.200 kg de antecipação.",
+      "O gel ainda está acima do mínimo, mas a combinação de consumo diário e a ordem do Toalet 10 estoura a cobertura da semana. Recomendamos 3.200 kg de antecipação.",
   },
   {
     id: "need-mb",
@@ -65,20 +65,20 @@ export const needSeeds: NeedSeed[] = [
     baseQty: 120,
     priority: "media",
     drivers: [
-      "Produto C com demanda +22% e melhor margem da planta",
-      "Estoque 95 kg · mínimo 80 kg · 8,6 dias",
-      "Priorizar C na Linha 1 consome masterbatch azul",
+      "Máscara Medix com demanda +22% e melhor margem",
+      "Estoque TNT 95 kg · mínimo 80 kg · 8,6 dias",
+      "Priorizar máscara e avental na Linha EPI consome TNT",
     ],
     insight:
-      "O Masterbatch azul técnico não está crítico hoje, mas a priorização do Produto C queima o buffer. 120 kg cobrem duas semanas da fila extra.",
+      "O TNT não está crítico hoje, mas a priorização de máscara e avental queima o buffer. 120 kg cobrem duas semanas da fila extra.",
   },
 ];
 
 export const quotes: Quote[] = [
   {
     id: "q-pig-color",
-    supplierName: "Colorquímica",
-    city: "Caxias do Sul · RS",
+    supplierName: "Plásticos Baixada",
+    city: "Duque de Caxias · RJ",
     materialId: "pig-preto",
     origin: "Marketplace B2B",
     unitPrice: 17.4,
@@ -93,8 +93,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-pig-basf",
-    supplierName: "BASF Colorants",
-    city: "Guaratinguetá · SP",
+    supplierName: "Filme Médico SP",
+    city: "Guarulhos · SP",
     materialId: "pig-preto",
     origin: "API do fornecedor",
     unitPrice: 18.2,
@@ -109,8 +109,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-pig-lanxess",
-    supplierName: "Lanxess",
-    city: "Porto Feliz · SP",
+    supplierName: "Plásticos Tijuca",
+    city: "Rio de Janeiro · RJ",
     materialId: "pig-preto",
     origin: "Cadastro interno",
     unitPrice: 18.9,
@@ -125,7 +125,7 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-pig-cromex",
-    supplierName: "Cromex",
+    supplierName: "PoliSaúde Express",
     city: "São Paulo · SP",
     materialId: "pig-preto",
     origin: "Catálogo externo",
@@ -141,8 +141,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-hdpe-unipar",
-    supplierName: "Unipar",
-    city: "Santo André · SP",
+    supplierName: "Gel Norte",
+    city: "Duque de Caxias · RJ",
     materialId: "res-hdpe",
     origin: "Marketplace B2B",
     unitPrice: 8.15,
@@ -157,8 +157,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-hdpe-braskem",
-    supplierName: "Braskem",
-    city: "Triunfo · RS",
+    supplierName: "Química Hospitalar RJ",
+    city: "Rio de Janeiro · RJ",
     materialId: "res-hdpe",
     origin: "Cadastro interno",
     unitPrice: 8.4,
@@ -173,8 +173,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-hdpe-dow",
-    supplierName: "Dow",
-    city: "Bahia · BA",
+    supplierName: "Absorvente Plus",
+    city: "Camaçari · BA",
     materialId: "res-hdpe",
     origin: "API do fornecedor",
     unitPrice: 8.55,
@@ -189,8 +189,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-mb-poly",
-    supplierName: "Avient",
-    city: "Campinas · SP",
+    supplierName: "TNT Leste",
+    city: "Nova Iguaçu · RJ",
     materialId: "mb-azul",
     origin: "Cotação recebida",
     unitPrice: 22.8,
@@ -205,7 +205,7 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-mb-cromex",
-    supplierName: "Cromex",
+    supplierName: "Medix",
     city: "São Paulo · SP",
     materialId: "mb-azul",
     origin: "Cadastro interno",
@@ -221,8 +221,8 @@ export const quotes: Quote[] = [
   },
   {
     id: "q-mb-clariant",
-    supplierName: "Clariant",
-    city: "Suzano · SP",
+    supplierName: "Descarpack",
+    city: "São Paulo · SP",
     materialId: "mb-azul",
     origin: "Catálogo externo",
     unitPrice: 23.9,
@@ -238,27 +238,27 @@ export const quotes: Quote[] = [
 ];
 
 export const purchaseHistory = [
-  { id: "SC-1018", date: "12/09", material: "Resina HDPE natural", supplier: "Braskem", qty: 8000, total: 67920, onTime: true },
-  { id: "SC-1024", date: "15/09", material: "Aditivo UV estabilizante", supplier: "BASF", qty: 200, total: 6700, onTime: true },
-  { id: "SC-1029", date: "18/09", material: "Pigmento preto industrial", supplier: "Lanxess", qty: 220, total: 4578, onTime: false },
-  { id: "SC-1033", date: "20/09", material: "Nylon PA6 técnico", supplier: "Radici", qty: 900, total: 19980, onTime: true },
+  { id: "SC-1018", date: "12/09", material: "Gel absorvente Toalet", supplier: "Química Hospitalar RJ", qty: 8000, total: 67920, onTime: true },
+  { id: "SC-1024", date: "15/09", material: "Caixa e rótulo ANVISA", supplier: "Embalagens Carioca", qty: 2000, total: 4800, onTime: true },
+  { id: "SC-1029", date: "18/09", material: "Filme PE para saco Toalet", supplier: "Plásticos Tijuca", qty: 220, total: 4578, onTime: false },
+  { id: "SC-1033", date: "20/09", material: "Suporte plástico Toalet", supplier: "Injeção Nova Iguaçu", qty: 900, total: 6030, onTime: true },
 ];
 
 export const futureChannels = [
-  { id: "cad", title: "Fornecedores cadastrados", now: true, detail: "Lanxess, Braskem, Cromex e Radici já entram na comparação." },
-  { id: "cat", title: "Catálogos externos", now: false, detail: "Cromex e Clariant simulados como consulta a catálogo." },
-  { id: "b2b", title: "Marketplaces B2B", now: false, detail: "Colorquímica e Unipar representam o canal de marketplace." },
-  { id: "api", title: "APIs de fornecedores", now: false, detail: "BASF e Dow entram como cotação via API." },
+  { id: "cad", title: "Fornecedores cadastrados", now: true, detail: "Plásticos Tijuca, Química Hospitalar, Medix e Descarpack." },
+  { id: "cat", title: "Catálogos externos", now: false, detail: "Medix e Descarpack simulados como consulta a catálogo." },
+  { id: "b2b", title: "Marketplaces B2B", now: false, detail: "Cotações de filme e gel no canal B2B." },
+  { id: "api", title: "APIs de fornecedores", now: false, detail: "Filme Médico e Absorvente Plus como cotação via API." },
   { id: "rfq", title: "Solicitar cotações", now: false, detail: "Na versão definitiva, dispara RFQ e aguarda propostas." },
   { id: "cmp", title: "Comparar propostas", now: true, detail: "Preço, prazo, qualidade, atraso, frete e total já cruzados." },
-  { id: "hist", title: "Histórico de compras", now: true, detail: "SCs recentes da Atlas Polímeros alimentam o índice de atraso." },
+  { id: "hist", title: "Histórico de compras", now: true, detail: "SCs recentes da FLIND alimentam o índice de atraso." },
 ];
 
 export const buyFlow = [
-  { n: "01", title: "Venda / produção", source: "Shopify · MES" },
-  { n: "02", title: "Estoque cai", source: "WMS" },
+  { n: "01", title: "Venda / produção", source: "Tray · MES" },
+  { n: "02", title: "Estoque cai", source: "WMS Tijuca" },
   { n: "03", title: "Ruptura à vista", source: "Motor de saldo" },
-  { n: "04", title: "BOM do insumo", source: "Produto A / B / E" },
+  { n: "04", title: "BOM do insumo", source: "Toalet / EPI" },
   { n: "05", title: "Qtd. calculada", source: "7 dias + campanha" },
   { n: "06", title: "Fornecedores", source: "Cadastro · B2B · API" },
   { n: "07", title: "Comparação", source: "Preço ≠ melhor" },

@@ -10,8 +10,8 @@ export function Inventory() {
   return (
     <div className="stack">
       <p className="lead">
-        Produto acabado e insumos no mesmo quadro. Quando o e-commerce baixa o
-        Produto A, a plataforma já verifica se há pigmento e resina para produzir de novo
+        Produto acabado e insumos no mesmo quadro. Quando a loja Tray baixa o
+        Toalet 10, a plataforma já verifica se há filme PE e gel para produzir de novo
         — e abre a necessidade em Compras Inteligentes.
       </p>
       <Panel pad={false}>

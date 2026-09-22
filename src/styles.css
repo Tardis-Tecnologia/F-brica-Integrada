@@ -9,8 +9,8 @@
   --text: #e7eef3;
   --muted: #8b9bab;
   --dim: #5d6e7c;
-  --brass: #c4a35a;
-  --brass-2: #e0c27a;
+  --brass: #3d7ea6;
+  --brass-2: #6ea8d8;
   --cyan: #3ee0c4;
   --cyan-dim: rgba(62, 224, 196, 0.12);
   --red: #e24b4a;
@@ -814,7 +814,7 @@ a.primary { text-decoration: none; }
 
 .ops-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
   gap: 14px;
   min-width: 0;
 }

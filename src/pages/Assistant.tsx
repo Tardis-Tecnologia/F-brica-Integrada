@@ -11,7 +11,7 @@ export function Assistant() {
   const [msgs, setMsgs] = useState<Msg[]>([
     {
       role: "ai",
-      title: "Assistente da planta Joinville",
+      title: "Assistente da planta Tijuca · FLIND",
       text: "Posso responder com os dados desta demonstração. Pergunte sobre produção, estoque, compras, fornecedores ou margem.",
     },
   ]);

@@ -13,7 +13,7 @@ export function TracePublic() {
         <Logo size={36} />
         <div>
           <p className="kicker">Rastreio autorizado</p>
-          <strong>Fábrica Integrada · Atlas Polímeros</strong>
+          <strong>Fábrica Integrada · FLIND</strong>
         </div>
       </header>
 

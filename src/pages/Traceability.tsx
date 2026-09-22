@@ -192,7 +192,7 @@ function LabelCard({
       <article className="ship-label">
         <header>
           <div>
-            <p className="kicker">Etiqueta de venda · Atlas Polímeros</p>
+            <p className="kicker">Etiqueta de venda · FLIND</p>
             <h3>NF-e {ship.nfe}</h3>
           </div>
           <Link className="label-qr" to={`/trace/${ship.token}`}>

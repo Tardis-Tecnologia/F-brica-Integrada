@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import { channelMix, flowSteps, revenueSeries } from "../data/mock";
 import { agingBucket, agingLabels, payments, shipments } from "../data/commerce";
+import { cycleFlag } from "../data/crm";
 import { useData } from "../state/DataContext";
 import { coverLabel, money, pct, qty, toneByCover } from "../lib/format";
 import { Kpi, Panel, PanelHead, Tone } from "../components/ui";
@@ -35,12 +36,13 @@ export function Dashboard() {
           <p className="kicker">Situação geral da operação</p>
           <h3>Atenção operacional · índice 72/100</h3>
           <p>
-            Vendas seguem firmes, mas o Produto A tem cobertura de{" "}
+            A loja Tray segue firme, mas o Toalet 10 tem cobertura de{" "}
             {coverLabel(products[0].stock, products[0].avgDaily)}
             {pig
-              ? ` e o pigmento preto cobre ${coverLabel(pig.stock, pig.avgDaily)}`
+              ? ` e o filme PE cobre ${coverLabel(pig.stock, pig.avgDaily)}`
               : ""}
-            . A Linha 2 pressiona a margem. A IA já cruzou produção e fornecedores.
+            . A Linha Kit pressiona a margem. FGTS e AVCB vencidos — a IA já pode
+            atualizar as certidões automáticas.
           </p>
         </div>
         <div className="health-meters">
@@ -60,7 +62,7 @@ export function Dashboard() {
         <Kpi label="Estoque" value={money(kpis.stockValue)} delta={`${crit.length} itens críticos`} deltaTone="down" hint="PA + insumos" />
         <Kpi label="Custos" value={money(kpis.costs)} delta="+3,1% por refugo" deltaTone="down" hint="custo industrial" />
         <Kpi label="Margem" value={pct(kpis.margin)} delta="−3,3 p.p." deltaTone="down" hint="era 36,1%" />
-        <Kpi label="Desperdício" value={pct(kpis.waste)} delta="Linha 2 +14%" deltaTone="down" hint="7 dias" />
+        <Kpi label="Desperdício" value={pct(kpis.waste)} delta="Linha Kit +14%" deltaTone="down" hint="7 dias" />
         <Kpi label="Estoque crítico" value={`${crit.length} produtos`} delta="A e E abaixo do mín." deltaTone="warn" hint="ação na Central de IA" />
       </div>
 
@@ -227,7 +229,7 @@ export function Dashboard() {
 type Drill = { title: string; rows: { id: string; text: string; extra: string; to: string }[] };
 
 function OpsBoard() {
-  const { sales, alerts } = useData();
+  const { sales, alerts, certificates, machines, accounts } = useData();
   const [drill, setDrill] = useState<Drill | null>(null);
   const overduePay = payments.filter((p) => p.status === "Vencido");
   const paid = payments.filter((p) => p.status === "Pago");
@@ -261,6 +263,23 @@ function OpsBoard() {
         { label: "Entregues", n: shipments.filter((s) => s.stage === "Entrega").length, to: "/app/rastreio", rows: shipments.filter((s) => s.stage === "Entrega").map((s) => ({ id: s.id, text: s.client, extra: "Entrega", to: `/app/rastreio?q=${s.id}` })) },
         { label: "Ocorrências", n: shipments.filter((s) => s.delayHours > 0).length, to: "/app/rastreio", rows: shipments.filter((s) => s.delayHours > 0).map((s) => ({ id: s.id, text: s.note, extra: `+${s.delayHours} h`, to: `/app/rastreio?q=${s.id}` })) },
         { label: "Entregas atrasadas", n: shipments.filter((s) => s.delayHours >= 8).length, to: "/app/rastreio", rows: shipments.filter((s) => s.delayHours >= 8).map((s) => ({ id: s.id, text: s.client, extra: `+${s.delayHours} h`, to: `/app/rastreio?q=${s.id}` })) },
+      ],
+    },
+    {
+      title: "Comercial",
+      items: [
+        { label: "Recompra agora", n: accounts.filter((a) => cycleFlag(a.lastBuyDays, a.cycleDays) !== "cedo").length, to: "/app/comercial", rows: accounts.filter((a) => cycleFlag(a.lastBuyDays, a.cycleDays) !== "cedo").map((a) => ({ id: a.id, text: `${a.name} · ${a.product}`, extra: `${a.cycleDays} d`, to: "/app/comercial" })) },
+        { label: "Curva A", n: accounts.filter((a) => a.abc === "A").length, to: "/app/comercial", rows: accounts.filter((a) => a.abc === "A").map((a) => ({ id: a.id, text: a.name, extra: money(a.avgTicket), to: "/app/comercial" })) },
+        { label: "WhatsApp / e-mail", n: "85%", to: "/app/comercial", rows: accounts.filter((a) => a.channel === "WhatsApp" || a.channel === "E-mail").map((a) => ({ id: a.id, text: a.name, extra: a.channel, to: "/app/comercial" })) },
+      ],
+    },
+    {
+      title: "Conformidade",
+      items: [
+        { label: "Certidões vencidas", n: certificates.filter((c) => c.status === "overdue").length, to: "/app/conformidade", rows: certificates.filter((c) => c.status === "overdue").map((c) => ({ id: c.id, text: c.name, extra: c.expires, to: "/app/conformidade" })) },
+        { label: "A vencer", n: certificates.filter((c) => c.status === "soon" || c.status === "pending").length, to: "/app/conformidade", rows: certificates.filter((c) => c.status === "soon" || c.status === "pending").map((c) => ({ id: c.id, text: c.name, extra: `${c.days} dias`, to: "/app/conformidade" })) },
+        { label: "Máquinas atrasadas", n: machines.filter((m) => m.status === "overdue").length, to: "/app/conformidade", rows: machines.filter((m) => m.status === "overdue").map((m) => ({ id: m.id, text: m.name, extra: m.nextService, to: "/app/conformidade" })) },
+        { label: "Preventiva próxima", n: machines.filter((m) => m.status === "soon").length, to: "/app/conformidade", rows: machines.filter((m) => m.status === "soon").map((m) => ({ id: m.id, text: m.name, extra: m.nextService, to: "/app/conformidade" })) },
       ],
     },
     {

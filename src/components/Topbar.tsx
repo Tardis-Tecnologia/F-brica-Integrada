@@ -51,7 +51,7 @@ export function Topbar({
           Simular venda e-commerce
         </button>
         <div className="avatar" title={company.manager}>
-          MC
+          CS
         </div>
       </div>
     </header>

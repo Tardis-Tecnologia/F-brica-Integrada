@@ -15,7 +15,7 @@ export function AICenter() {
         <h2>A IA já leu vendas, estoque, BOM, linhas e custos.</h2>
         <p>
           Não é um chatbot genérico: cada cartão abaixo nasce do mesmo cenário da
-          Atlas Polímeros que você vê no dashboard. A compra de pigmento abre a
+          FLIND que você vê no dashboard. A compra de filme PE abre a
           comparação de fornecedores — preço, prazo, qualidade e risco de ruptura.
         </p>
       </div>

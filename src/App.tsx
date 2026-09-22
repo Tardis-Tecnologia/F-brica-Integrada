@@ -14,6 +14,8 @@ import { Purchases } from "./pages/Purchases";
 import { Traceability } from "./pages/Traceability";
 import { Collections } from "./pages/Collections";
 import { TracePublic } from "./pages/TracePublic";
+import { Compliance } from "./pages/Compliance";
+import { Commercial } from "./pages/Commercial";
 import type { ReactNode } from "react";
 
 function Guard({ children }: { children: ReactNode }) {
@@ -42,8 +44,10 @@ export default function App() {
           <Route path="estoque" element={<Inventory />} />
           <Route path="compras" element={<Purchases />} />
           <Route path="producao" element={<Production />} />
+          <Route path="conformidade" element={<Compliance />} />
           <Route path="custos" element={<Costs />} />
           <Route path="rastreio" element={<Traceability />} />
+          <Route path="comercial" element={<Commercial />} />
           <Route path="cobrancas" element={<Collections />} />
           <Route path="ia" element={<AICenter />} />
           <Route path="assistente" element={<Assistant />} />

@@ -24,6 +24,14 @@ import {
 import { daysCover, money, nowClock } from "../lib/format";
 import { liveQty, quotesFor, rankQuotes, ruptureDaysOf } from "../lib/purchases";
 import { needSeeds } from "../data/purchases";
+import {
+  applyAiCertificateRefresh,
+  certificatesSeed,
+  machinesSeed,
+  type Certificate,
+  type Machine,
+} from "../data/compliance";
+import { accountsSeed, cycleFlag, type Account } from "../data/crm";
 
 export type Toast = { id: string; text: string } | null;
 
@@ -52,6 +60,11 @@ type DataCtx = {
   simulateSale: () => void;
   applyRec: (id: string) => void;
   createPurchase: (p: Omit<PurchaseRequest, "id">) => void;
+  certificates: Certificate[];
+  machines: Machine[];
+  refreshCertificates: () => void;
+  accounts: Account[];
+  fireRepurchase: (id: string, target: "whatsapp" | "team" | "both") => void;
   ping: (text: string) => void;
   clearToast: () => void;
 };
@@ -75,6 +88,61 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [livePulse, setLivePulse] = useState(false);
   const [saleSeq, setSaleSeq] = useState(8842);
   const [scSeq, setScSeq] = useState(1042);
+  const [certificates, setCertificates] = useState(() => clone(certificatesSeed));
+  const [machines] = useState(() => clone(machinesSeed));
+  const [accounts, setAccounts] = useState(() => clone(accountsSeed));
+
+  const refreshCertificates = () => {
+    const next = applyAiCertificateRefresh(certificates);
+    const auto = next.filter((c, i) => c.auto && c.status === "ok" && certificates[i].status !== "ok").length;
+    const human = next.filter((c) => c.status === "pending").length;
+    setCertificates(next);
+    setAlerts((a) => [
+      {
+        id: `al-cert-${Date.now()}`,
+        time: nowClock(),
+        tone: human ? "atencao" : "ok",
+        title: "IA atualizou as certidões nos portais",
+        detail: `${auto} documento(s) renovados automaticamente. ${human} exigem gente (AVCB, ANVISA, e-CNPJ).`,
+        source: "Conformidade + IA",
+      },
+      ...a,
+    ]);
+    setToast({
+      id: "cert-ai",
+      text: `IA consultou Receita, Caixa e SEFAZ. Renovou o que dava. AVCB e ANVISA ficaram com o responsável.`,
+    });
+  };
+
+  const fireRepurchase = (id: string, target: "whatsapp" | "team" | "both") => {
+    const acc = accounts.find((a) => a.id === id);
+    if (!acc || acc.alerted) return;
+    if (cycleFlag(acc.lastBuyDays, acc.cycleDays) === "cedo") return;
+    setAccounts((list) => list.map((a) => (a.id === id ? { ...a, alerted: true } : a)));
+    const toClient =
+      target !== "team"
+        ? `WhatsApp/e-mail a ${acc.name}: reposição de ${acc.product} (ciclo ${acc.cycleDays} dias). ${acc.stockHint}`
+        : "";
+    const toTeam =
+      target !== "whatsapp"
+        ? `Lembrete ${acc.owner}: falar com ${acc.name} no ${acc.channel} — não ligar.`
+        : "";
+    setAlerts((a) => [
+      {
+        id: `al-crm-${Date.now()}`,
+        time: nowClock(),
+        tone: "atencao",
+        title: `Recompra ${acc.name}`,
+        detail: [toClient, toTeam].filter(Boolean).join(" "),
+        source: "Comercial · ciclo ABC",
+      },
+      ...a,
+    ]);
+    setToast({
+      id: `crm-${id}`,
+      text: target === "team" ? toTeam : target === "whatsapp" ? toClient : `${toClient} ${toTeam}`,
+    });
+  };
 
   const simulateSale = () => {
     const product = products.find((p) => p.id === "atl-a");
@@ -97,7 +165,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       productId: "atl-a",
       qty,
       channel: "E-commerce",
-      origin: "Shopify",
+      origin: "Tray",
       value,
       status: "Novo",
     };
@@ -106,9 +174,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
       id: `al-${Date.now()}`,
       time,
       tone: "critico",
-      title: "Nova venda e-commerce reduziu o Produto A",
-      detail: `${id} · 80 un do Reservatório 20 L. Estoque agora ${a.stock} un · cobertura ${cover.toLocaleString("pt-BR", { maximumFractionDigits: 1, minimumFractionDigits: 1 })} dias.`,
-      source: "E-commerce → Estoque",
+      title: "Nova venda Tray reduziu o Toalet 10",
+      detail: `${id} · 80 kits Toalet + suporte. Estoque agora ${a.stock} · cobertura ${cover.toLocaleString("pt-BR", { maximumFractionDigits: 1, minimumFractionDigits: 1 })} dias.`,
+      source: "Tray → Estoque",
     };
 
     setProducts(nextProducts);
@@ -119,8 +187,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         id: `al-buy-${Date.now()}`,
         time,
         tone: "atencao",
-        title: "Compras IA: pigmento insuficiente para repor o Produto A",
-        detail: "A venda acelera a ordem de 1.200 un. O BOM pede pigmento preto, já com 4,3 dias de cobertura. Abrir Compras Inteligentes para comparar fornecedores.",
+        title: "Compras IA: filme PE insuficiente para repor o Toalet",
+        detail: "A venda acelera a ordem de 1.200 kits. O BOM pede filme PE, já com 4,3 dias de cobertura. Abrir Compras Inteligentes para comparar fornecedores.",
         source: "Venda → Produção → Compras",
       },
       ...a,
@@ -134,7 +202,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLivePulse(true);
     setToast({
       id,
-      text: `Venda ${id} integrou o e-commerce. Estoque do Produto A atualizado · IA recalculou cobertura e a necessidade de pigmento.`,
+      text: `Venda ${id} integrou a loja Tray. Estoque do Toalet 10 atualizado · IA recalculou cobertura e a necessidade de filme PE.`,
     });
     window.setTimeout(() => setLivePulse(false), 4200);
   };
@@ -217,14 +285,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     if (rec.actionKind === "qualidade") {
       setToast({
         id,
-        text: "Ação de qualidade aberta na Linha 2 · setup térmico e molde da conexão 50 mm.",
+        text: "Ação de qualidade aberta na Linha Kit · selagem do saco Toalet e lote com falha de vedação.",
       });
     }
 
     if (rec.actionKind === "prioridade") {
       setToast({
         id,
-        text: "Produto C priorizado na fila da Linha 1 após a campanha do Reservatório 20 L.",
+        text: "Máscara Medix priorizada na Linha EPI após a campanha do Toalet 10.",
       });
     }
 
@@ -256,11 +324,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
       livePulse,
       simulateSale,
       applyRec,
+      certificates,
+      machines,
+      refreshCertificates,
+      accounts,
+      fireRepurchase,
       createPurchase,
       ping: (text: string) => setToast({ id: `n-${Date.now()}`, text }),
       clearToast: () => setToast(null),
     }),
-    [products, materials, sales, orders, recs, alerts, kpis, purchaseRequests, toast, livePulse],
+    [products, materials, sales, orders, recs, alerts, kpis, purchaseRequests, toast, livePulse, certificates, machines, accounts],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

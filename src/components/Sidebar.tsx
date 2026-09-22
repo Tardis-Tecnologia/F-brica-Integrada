@@ -5,8 +5,10 @@ import {
   Boxes,
   PackageSearch,
   Factory,
+  ShieldCheck,
   CircleDollarSign,
   Route,
+  Users,
   Wallet,
   Brain,
   MessageSquareText,
@@ -21,7 +23,9 @@ const items = [
   { to: "/app/compras", label: "Compras IA", icon: PackageSearch },
   { to: "/app/producao", label: "Produção", icon: Factory },
   { to: "/app/custos", label: "Custos e perdas", icon: CircleDollarSign },
+  { to: "/app/conformidade", label: "Conformidade", icon: ShieldCheck },
   { to: "/app/rastreio", label: "Rastreio", icon: Route },
+  { to: "/app/comercial", label: "Comercial", icon: Users },
   { to: "/app/cobrancas", label: "Cobranças", icon: Wallet },
   { to: "/app/ia", label: "Central de IA", icon: Brain },
   { to: "/app/assistente", label: "Assistente IA", icon: MessageSquareText },
@@ -41,7 +45,7 @@ export function Sidebar({
         <Logo />
         <div>
           <strong>Fábrica Integrada</strong>
-          <span>Atlas Polímeros · PLT-JOI-01</span>
+          <span>FLIND · Tijuca · RJ</span>
         </div>
       </div>
 
@@ -61,9 +65,24 @@ export function Sidebar({
         ))}
       </nav>
 
+      <p className="nav-label">Planta e documentos</p>
+      <nav>
+        {items.slice(6, 7).map((it) => (
+          <NavLink
+            key={it.to}
+            to={it.to}
+            onClick={onNavigate}
+            className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
+          >
+            <it.icon size={18} />
+            {it.label}
+          </NavLink>
+        ))}
+      </nav>
+
       <p className="nav-label">Cliente e caixa</p>
       <nav>
-        {items.slice(6, 8).map((it) => (
+        {items.slice(7, 10).map((it) => (
           <NavLink
             key={it.to}
             to={it.to}
@@ -78,7 +97,7 @@ export function Sidebar({
 
       <p className="nav-label">Inteligência</p>
       <nav>
-        {items.slice(8).map((it) => (
+        {items.slice(10).map((it) => (
           <NavLink
             key={it.to}
             to={it.to}
@@ -124,7 +143,7 @@ export function Logo({ size = 36 }: { size?: number }) {
       <rect width="64" height="64" rx="10" fill="#0B1014" />
       <path
         d="M10 46V22l22-10 22 10v24H10z"
-        stroke="#C4A35A"
+        stroke="#3d7ea6"
         strokeWidth="2.2"
       />
       <path
@@ -132,7 +151,7 @@ export function Logo({ size = 36 }: { size?: number }) {
         stroke="#3EE0C4"
         strokeWidth="2.2"
       />
-      <circle cx="32" cy="22" r="3" fill="#C4A35A" />
+      <circle cx="32" cy="22" r="3" fill="#3d7ea6" />
     </svg>
   );
 }

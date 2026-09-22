@@ -3,7 +3,7 @@ import { useData } from "../state/DataContext";
 import { money, qty } from "../lib/format";
 import { Panel, PanelHead, Tone, productById } from "../components/ui";
 
-const channels = ["Todos", "E-commerce", "ERP", "Marketplace", "Representante"] as const;
+const channels = ["Todos", "E-commerce", "ERP", "Licitação", "Representante"] as const;
 
 export function Sales() {
   const { sales, products } = useData();
@@ -28,15 +28,15 @@ export function Sales() {
       </div>
 
       <div className="split-4 mini-stats">
-        <Stat n="E-commerce" d="Tray e Shopify · pedido já baixa estoque e dispara o SINK" />
-        <Stat n="ERP" d="SINK ERP · NF-e, boleto e B2B (mock)" />
-        <Stat n="Marketplace" d="Mercado Livre · demanda de tampa e conexão" />
-        <Stat n="Representante" d="Portal B2B · flanges e tubos" />
+        <Stat n="E-commerce" d="Loja Tray flind.com.br · pedido já baixa estoque e dispara o SINK" />
+        <Stat n="ERP" d="SINK ERP · NF-e, boleto PagBank e B2B hospitalar" />
+        <Stat n="Licitação" d="Comprasnet e SISMICAT · hospitais e forças armadas" />
+        <Stat n="Representante" d="Clínicas, obras e aviação" />
       </div>
 
       <Panel pad={false}>
         <div className="pad">
-          <PanelHead kicker="Livro de pedidos" title="Vendas simuladas da Atlas Polímeros" />
+          <PanelHead kicker="Livro de pedidos" title="Vendas simuladas da FLIND" />
         </div>
         <div className="table-wrap">
           <table>

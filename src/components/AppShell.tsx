@@ -7,11 +7,11 @@ import { useData } from "../state/DataContext";
 const titles: Record<string, { title: string; subtitle: string }> = {
   "/app": {
     title: "Dashboard executivo",
-    subtitle: "Operação e caixa em um só lugar · dados de protótipo",
+    subtitle: "Toalet, EPIs e caixa da FLIND · dados de protótipo",
   },
   "/app/vendas": {
     title: "Vendas e pedidos",
-    subtitle: "Pedidos Tray, SINK, marketplace e representantes — tudo simulado",
+    subtitle: "Pedidos da loja Tray, SINK, Comprasnet e representantes",
   },
   "/app/estoque": {
     title: "Estoque e insumos",
@@ -29,9 +29,17 @@ const titles: Record<string, { title: string; subtitle: string }> = {
     title: "Custos e desperdícios",
     subtitle: "Onde o custo sobe, onde a margem foge e o efeito do refugo",
   },
+  "/app/conformidade": {
+    title: "Conformidade",
+    subtitle: "Manutenção de máquinas e renovação de certidões — a IA atualiza o que o portal permite",
+  },
   "/app/rastreio": {
     title: "Rastreio e etiquetas",
     subtitle: "Timeline, etiqueta com QR e endereço de descarga ≠ sede",
+  },
+  "/app/comercial": {
+    title: "Comercial e recompra",
+    subtitle: "ABC + ciclo do cliente · alerta de estoque no WhatsApp/e-mail e lembrete ao time",
   },
   "/app/cobrancas": {
     title: "Alertas de pagamento",
@@ -43,7 +51,7 @@ const titles: Record<string, { title: string; subtitle: string }> = {
   },
   "/app/assistente": {
     title: "Assistente IA",
-    subtitle: "Pergunte em linguagem natural sobre a operação da Atlas Polímeros",
+    subtitle: "Pergunte sobre Toalet, estoque, filme PE, Tray ou boletos da FLIND",
   },
   "/app/integracoes": {
     title: "Integrações",
