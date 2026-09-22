@@ -2,6 +2,7 @@ import { Menu, Radio, Sparkles } from "lucide-react";
 import { company, useData } from "../state/DataContext";
 import { todayLabel } from "../lib/format";
 import { useEffect, useState } from "react";
+import { A11yPanel } from "./A11yPanel";
 
 export function Topbar({
   title,
@@ -46,8 +47,9 @@ export function Topbar({
         </span>
         <span className="meta-pill">{company.plant}</span>
         <span className="meta-pill mono">{todayLabel()} · {clock}</span>
+        <A11yPanel title={title} subtitle={subtitle} />
         <button className="demo-btn" onClick={simulateSale}>
-          <Sparkles size={15} />
+          <Sparkles size={15} aria-hidden />
           Simular venda e-commerce
         </button>
         <div className="avatar" title={company.manager}>

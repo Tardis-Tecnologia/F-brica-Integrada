@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { useData } from "../state/DataContext";
+import { useA11y } from "../state/A11yContext";
+import { speak } from "../lib/speech";
 
 const titles: Record<string, { title: string; subtitle: string }> = {
   "/app": {
@@ -62,17 +64,26 @@ const titles: Record<string, { title: string; subtitle: string }> = {
 export function AppShell() {
   const { pathname } = useLocation();
   const { toast, clearToast } = useData();
+  const { speakAlerts } = useA11y();
   const [open, setOpen] = useState(false);
   const page = titles[pathname] ?? titles["/app"];
 
   useEffect(() => {
     if (!toast) return;
+    if (speakAlerts) speak(toast.text);
     const t = window.setTimeout(clearToast, 5200);
     return () => window.clearTimeout(t);
-  }, [toast, clearToast]);
+  }, [toast, clearToast, speakAlerts]);
 
   return (
     <div className="shell">
+      <button
+        className="skip-link"
+        type="button"
+        onClick={() => document.getElementById("conteudo")?.focus()}
+      >
+        Ir para o conteúdo
+      </button>
       <Sidebar open={open} onNavigate={() => setOpen(false)} />
       {open ? <div className="scrim" onClick={() => setOpen(false)} /> : null}
       <div className="main">
@@ -81,11 +92,15 @@ export function AppShell() {
           subtitle={page.subtitle}
           onMenu={() => setOpen(true)}
         />
-        <div className="page">
+        <div className="page" id="conteudo" tabIndex={-1}>
           <Outlet />
         </div>
       </div>
-      {toast ? <div className="toast">{toast.text}</div> : null}
+      {toast ? (
+        <div className="toast" role="status" aria-live="polite">
+          {toast.text}
+        </div>
+      ) : null}
     </div>
   );
 }

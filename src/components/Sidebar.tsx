@@ -40,7 +40,7 @@ export function Sidebar({
   onNavigate: () => void;
 }) {
   return (
-    <aside className={`sidebar ${open ? "is-open" : ""}`}>
+    <aside className={`sidebar ${open ? "is-open" : ""}`} aria-label="Menu principal">
       <div className="brand">
         <Logo />
         <div>
@@ -59,7 +59,7 @@ export function Sidebar({
             onClick={onNavigate}
             className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
           >
-            <it.icon size={18} />
+            <it.icon size={18} aria-hidden />
             {it.label}
           </NavLink>
         ))}
@@ -74,7 +74,7 @@ export function Sidebar({
             onClick={onNavigate}
             className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
           >
-            <it.icon size={18} />
+            <it.icon size={18} aria-hidden />
             {it.label}
           </NavLink>
         ))}
@@ -89,7 +89,7 @@ export function Sidebar({
             onClick={onNavigate}
             className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
           >
-            <it.icon size={18} />
+            <it.icon size={18} aria-hidden />
             {it.label}
           </NavLink>
         ))}
@@ -104,7 +104,7 @@ export function Sidebar({
             onClick={onNavigate}
             className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
           >
-            <it.icon size={18} />
+            <it.icon size={18} aria-hidden />
             {it.label}
           </NavLink>
         ))}

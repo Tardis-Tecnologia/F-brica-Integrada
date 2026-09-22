@@ -17,6 +17,7 @@ import { TracePublic } from "./pages/TracePublic";
 import { Compliance } from "./pages/Compliance";
 import { Commercial } from "./pages/Commercial";
 import type { ReactNode } from "react";
+import { A11yProvider } from "./state/A11yContext";
 
 function Guard({ children }: { children: ReactNode }) {
   if (!sessionStorage.getItem("fi-auth")) return <Navigate to="/" replace />;
@@ -25,6 +26,7 @@ function Guard({ children }: { children: ReactNode }) {
 
 export default function App() {
   return (
+    <A11yProvider>
     <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -56,5 +58,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>
+    </A11yProvider>
   );
 }

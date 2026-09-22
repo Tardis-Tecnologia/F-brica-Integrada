@@ -967,3 +967,115 @@ a.primary { text-decoration: none; }
   .page, .topbar { padding-left: 14px; padding-right: 14px; }
   .demo-btn span, .topbar-meta .meta-pill:nth-child(2) { display: none; }
 }
+
+:focus-visible {
+  outline: 3px solid var(--brass);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  z-index: 80;
+  transform: translateY(-140%);
+  background: var(--brass);
+  color: #fff;
+  border: 0;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+.skip-link:focus {
+  transform: none;
+}
+
+.a11y-wrap { position: relative; }
+.a11y-btn {
+  background: var(--panel);
+  color: var(--brass);
+  border: 1px solid rgba(30, 30, 89, 0.28);
+  padding: 8px 12px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+.a11y-btn.on, .a11y-btn[aria-expanded="true"] {
+  background: var(--brass);
+  color: #fff;
+  border-color: var(--brass);
+}
+.a11y-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(360px, 86vw);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 30;
+  display: grid;
+  gap: 10px;
+}
+.a11y-panel h2 {
+  font-size: 18px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--font);
+}
+.a11y-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.a11y-row input { width: 18px; height: 18px; accent-color: var(--brass); }
+.a11y-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+
+html.a11y-contrast {
+  --bg: #ffffff;
+  --bg-2: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #ffffff;
+  --line: #000000;
+  --line-2: #000000;
+  --text: #000000;
+  --muted: #111111;
+  --dim: #1a1a1a;
+  --brass: #000000;
+  --brass-2: #000000;
+  --cyan: #000080;
+  --cyan-dim: #e8e8ff;
+  --red: #9b0000;
+  --wine: #7a0030;
+  --amber: #7a4a00;
+  --green: #0b5c30;
+  --blue: #000080;
+  --shadow: none;
+}
+html.a11y-contrast body {
+  background: #fff;
+}
+html.a11y-contrast .topbar {
+  background: #fff;
+  border-bottom: 2px solid #000;
+}
+html.a11y-contrast .sidebar {
+  border-right: 2px solid #000;
+}
+
+html.a11y-large { font-size: 20px; }
+html.a11y-large .topbar-title h1 { font-size: 1.35rem; white-space: normal; }
+html.a11y-large .kicker { font-size: 13px; }
+html.a11y-large table { font-size: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
