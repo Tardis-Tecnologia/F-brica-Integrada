@@ -12,7 +12,7 @@ export function AICenter() {
     <div className="stack">
       <div className="ai-hero">
         <p className="kicker">Cruzamento ativo</p>
-        <h2>A IA já leu vendas, estoque, BOM, linhas e custos.</h2>
+        <h2>A IA já leu vendas, estoque, BOM e compras.</h2>
         <p>
           Não é um chatbot genérico: cada cartão abaixo nasce do mesmo cenário da
           FLIND que você vê no dashboard. A compra de filme PE abre a

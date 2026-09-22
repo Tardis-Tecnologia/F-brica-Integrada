@@ -44,7 +44,7 @@ export function Assistant() {
           </button>
         ))}
         <p className="fine">
-          Respostas simuladas, mas amarradas ao estoque, custos e ordens que estão
+          Respostas simuladas, mas amarradas ao estoque, compras e pedidos que estão
           nas outras telas — inclusive se você simular uma venda.
         </p>
       </aside>

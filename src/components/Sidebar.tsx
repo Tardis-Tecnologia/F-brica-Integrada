@@ -4,9 +4,7 @@ import {
   ShoppingCart,
   Boxes,
   PackageSearch,
-  Factory,
   ShieldCheck,
-  CircleDollarSign,
   Route,
   Users,
   Wallet,
@@ -21,8 +19,6 @@ const items = [
   { to: "/app/vendas", label: "Vendas", icon: ShoppingCart },
   { to: "/app/estoque", label: "Estoque", icon: Boxes },
   { to: "/app/compras", label: "Compras IA", icon: PackageSearch },
-  { to: "/app/producao", label: "Produção", icon: Factory },
-  { to: "/app/custos", label: "Custos e perdas", icon: CircleDollarSign },
   { to: "/app/conformidade", label: "Conformidade", icon: ShieldCheck },
   { to: "/app/rastreio", label: "Rastreio", icon: Route },
   { to: "/app/comercial", label: "Comercial", icon: Users },
@@ -51,7 +47,7 @@ export function Sidebar({
 
       <p className="nav-label">Operação</p>
       <nav>
-        {items.slice(0, 6).map((it) => (
+        {items.slice(0, 4).map((it) => (
           <NavLink
             key={it.to}
             to={it.to}
@@ -67,7 +63,7 @@ export function Sidebar({
 
       <p className="nav-label">Planta e documentos</p>
       <nav>
-        {items.slice(6, 7).map((it) => (
+        {items.slice(4, 5).map((it) => (
           <NavLink
             key={it.to}
             to={it.to}
@@ -82,7 +78,7 @@ export function Sidebar({
 
       <p className="nav-label">Cliente e caixa</p>
       <nav>
-        {items.slice(7, 10).map((it) => (
+        {items.slice(5, 8).map((it) => (
           <NavLink
             key={it.to}
             to={it.to}
@@ -97,7 +93,7 @@ export function Sidebar({
 
       <p className="nav-label">Inteligência</p>
       <nav>
-        {items.slice(10).map((it) => (
+        {items.slice(8).map((it) => (
           <NavLink
             key={it.to}
             to={it.to}

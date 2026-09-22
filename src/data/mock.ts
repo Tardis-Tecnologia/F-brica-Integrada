@@ -448,8 +448,6 @@ export const flowSteps = [
   { n: "02", title: "Estoque atualiza", source: "WMS" },
   { n: "03", title: "Cobertura cai", source: "Motor de saldo" },
   { n: "04", title: "Insumos checados", source: "BOM + Compras" },
-  { n: "05", title: "Produção necessária", source: "MES" },
-  { n: "06", title: "Custos e perdas", source: "Custos industriais" },
-  { n: "07", title: "IA cruza tudo", source: "Motor analítico" },
-  { n: "08", title: "Ação ao gestor", source: "Central de IA" },
+  { n: "05", title: "IA cruza tudo", source: "Motor analítico" },
+  { n: "06", title: "Ação ao gestor", source: "Central de IA" },
 ];

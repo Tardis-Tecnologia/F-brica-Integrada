@@ -5,8 +5,6 @@ import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { Sales } from "./pages/Sales";
 import { Inventory } from "./pages/Inventory";
-import { Production } from "./pages/Production";
-import { Costs } from "./pages/Costs";
 import { AICenter } from "./pages/AICenter";
 import { Assistant } from "./pages/Assistant";
 import { Integrations } from "./pages/Integrations";
@@ -45,9 +43,9 @@ export default function App() {
           <Route path="vendas" element={<Sales />} />
           <Route path="estoque" element={<Inventory />} />
           <Route path="compras" element={<Purchases />} />
-          <Route path="producao" element={<Production />} />
+          <Route path="producao" element={<Navigate to="/app" replace />} />
+          <Route path="custos" element={<Navigate to="/app" replace />} />
           <Route path="conformidade" element={<Compliance />} />
-          <Route path="custos" element={<Costs />} />
           <Route path="rastreio" element={<Traceability />} />
           <Route path="comercial" element={<Commercial />} />
           <Route path="cobrancas" element={<Collections />} />

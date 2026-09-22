@@ -2,15 +2,11 @@ import type { Material, Product } from "../data/mock";
 import { coverLabel, money, pct, qty } from "./format";
 
 export const chips = [
-  "Como está minha produção?",
   "Quais produtos estão com estoque crítico?",
   "Devo comprar algum insumo?",
   "Qual o melhor fornecedor de filme PE?",
   "Onde está o pedido da Tray?",
   "Quais boletos vencem esta semana?",
-  "Onde estou perdendo dinheiro?",
-  "Por que minha margem caiu?",
-  "Preciso produzir alguma coisa esta semana?",
   "Quais certidões vencem?",
   "Tem máquina em manutenção?",
   "Quem está no ciclo de recompra?",

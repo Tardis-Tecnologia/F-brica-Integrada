@@ -23,14 +23,6 @@ const titles: Record<string, { title: string; subtitle: string }> = {
     title: "Compras inteligentes",
     subtitle: "WhatsApp por categoria · última negociação · não o preço de tabela",
   },
-  "/app/producao": {
-    title: "Produção",
-    subtitle: "Ordens, linhas, eficiência e desperdício do chão de fábrica",
-  },
-  "/app/custos": {
-    title: "Custos e desperdícios",
-    subtitle: "Onde o custo sobe, onde a margem foge e o efeito do refugo",
-  },
   "/app/conformidade": {
     title: "Conformidade",
     subtitle: "Manutenção de máquinas e renovação de certidões — a IA atualiza o que o portal permite",

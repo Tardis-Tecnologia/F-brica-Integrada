@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   Cell,
   Pie,
@@ -11,23 +13,70 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { channelMix, flowSteps, revenueSeries } from "../data/mock";
 import { agingBucket, agingLabels, payments, shipments } from "../data/commerce";
 import { cycleFlag } from "../data/crm";
+import { lotRows } from "../data/opsExtra";
 import { useData } from "../state/DataContext";
-import { coverLabel, money, pct, qty, toneByCover } from "../lib/format";
+import { coverLabel, daysCover, money, qty, toneByCover } from "../lib/format";
 import { Kpi, Panel, PanelHead, Tone } from "../components/ui";
 import { ArrowRight } from "lucide-react";
 
 const pieColors = ["#1e1e59", "#0d3d73", "#9e0039", "#969696"];
 
+function parseBr(d: string) {
+  const [dd, mm, yyyy] = d.split("/").map(Number);
+  return new Date(yyyy, mm - 1, dd);
+}
+
+function daysUntil(exp: string) {
+  const ms = parseBr(exp).getTime() - new Date(2026, 8, 22).getTime();
+  return Math.round(ms / 86_400_000);
+}
+
 export function Dashboard() {
-  const { products, materials, recs, alerts, kpis, livePulse } = useData();
+  const { products, materials, recs, alerts, kpis, livePulse, sales } = useData();
   const crit = products.filter(
     (p) => toneByCover(p.stock, p.minStock, p.avgDaily) !== "ok",
   );
   const pig = materials.find((m) => m.id === "pig-preto");
+
+  const movers = useMemo(() => {
+    return products
+      .map((p) => {
+        const rows = sales.filter((s) => s.productId === p.id);
+        const units = rows.reduce((a, s) => a + s.qty, 0);
+        const value = rows.reduce((a, s) => a + s.value, 0);
+        return { ...p, units, value, cover: daysCover(p.stock, p.avgDaily) };
+      })
+      .sort((a, b) => b.units - a.units);
+  }, [products, sales]);
+
+  const expiring = useMemo(
+    () =>
+      [...lotRows]
+        .map((l) => ({
+          ...l,
+          product: products.find((p) => p.id === l.productId),
+          days: daysUntil(l.exp),
+        }))
+        .sort((a, b) => a.lifeLeftPct - b.lifeLeftPct),
+    [products],
+  );
+
+  const emptying = useMemo(
+    () =>
+      [...products].sort(
+        (a, b) => daysCover(a.stock, a.avgDaily) - daysCover(b.stock, b.avgDaily),
+      ),
+    [products],
+  );
+
+  const top = movers[0];
+  const nextLot = expiring[0];
+  const firstOut = emptying[0];
+  const below85 = expiring.filter((l) => l.lifeLeftPct < l.hospitalMin).length;
 
   return (
     <div className="stack">
@@ -41,15 +90,15 @@ export function Dashboard() {
             {pig
               ? ` e o filme PE cobre ${coverLabel(pig.stock, pig.avgDaily)}`
               : ""}
-            . A Linha Kit pressiona a margem. FGTS e AVCB vencidos — a IA já pode
-            atualizar as certidões automáticas.
+            . Quem mais sai agora é o {top?.alias}. {nextLot?.product?.alias} está com {nextLot?.lifeLeftPct}% de vida útil
+            — hospital pede 85%. FGTS e AVCB vencidos.
           </p>
         </div>
         <div className="health-meters">
           <Meter label="Demanda" value={86} tone="ok" />
           <Meter label="Estoque" value={54} tone="warn" />
-          <Meter label="Produção" value={74} tone="ok" />
-          <Meter label="Custo" value={61} tone="warn" />
+          <Meter label="Entrega" value={78} tone="ok" />
+          <Meter label="Caixa" value={71} tone="warn" />
         </div>
       </div>
 
@@ -58,12 +107,180 @@ export function Dashboard() {
       <div className="kpi-grid">
         <Kpi label="Faturamento" value={money(kpis.revenue)} delta="+8,4% MTD" deltaTone="up" hint="vs. mês anterior" />
         <Kpi label="Pedidos" value={qty(kpis.orders)} delta="+126 hoje" deltaTone="up" hint="4 canais ativos" />
-        <Kpi label="Produção" value={`${qty(kpis.produced)} un`} delta="OEE 74,2%" deltaTone="warn" hint="3 linhas" />
         <Kpi label="Estoque" value={money(kpis.stockValue)} delta={`${crit.length} itens críticos`} deltaTone="down" hint="PA + insumos" />
-        <Kpi label="Custos" value={money(kpis.costs)} delta="+3,1% por refugo" deltaTone="down" hint="custo industrial" />
-        <Kpi label="Margem" value={pct(kpis.margin)} delta="−3,3 p.p." deltaTone="down" hint="era 36,1%" />
-        <Kpi label="Desperdício" value={pct(kpis.waste)} delta="Linha Kit +14%" deltaTone="down" hint="7 dias" />
         <Kpi label="Estoque crítico" value={`${crit.length} produtos`} delta="A e E abaixo do mín." deltaTone="warn" hint="ação na Central de IA" />
+      </div>
+
+      <div className="kpi-grid four">
+        <Kpi
+          label="Mais sai"
+          value={top?.alias ?? "—"}
+          delta={`${qty(top?.units ?? 0)} un no livro`}
+          deltaTone="up"
+          hint={`${money(top?.value ?? 0)} · ${top?.avgDaily} / dia`}
+        />
+        <Kpi
+          label="Validade mais curta"
+          value={nextLot?.product?.alias ?? "—"}
+          delta={`${nextLot?.lifeLeftPct}% de vida · lote ${nextLot?.lot}`}
+          deltaTone="down"
+          hint={`${nextLot?.shelfYears} ano${(nextLot?.shelfYears ?? 1) > 1 ? "s" : ""} de prateleira`}
+        />
+        <Kpi
+          label="Acaba primeiro"
+          value={firstOut?.alias ?? "—"}
+          delta={coverLabel(firstOut?.stock ?? 0, firstOut?.avgDaily ?? 1)}
+          deltaTone="down"
+          hint={`${qty(firstOut?.avgDaily ?? 0)} un/dia`}
+        />
+        <Kpi
+          label="Lote < 85%"
+          value={`${below85}`}
+          delta="carta de troca no hospital"
+          deltaTone="warn"
+          hint="regra de vida útil"
+        />
+      </div>
+
+      <div className="split-3">
+        <Panel>
+          <PanelHead
+            kicker="Giro"
+            title="Quais produtos saem mais"
+            extra={
+              <Link className="text-link" to="/app/vendas">
+                Vendas <ArrowRight size={14} />
+              </Link>
+            }
+          />
+          <p className="fine">Soma do livro de pedidos desta demonstração + ritmo diário.</p>
+          <div className="chart-md">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={movers} layout="vertical" margin={{ left: 8, right: 8 }}>
+                <CartesianGrid stroke="#e5e5e5" horizontal={false} />
+                <XAxis type="number" stroke="#64605f" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="alias" stroke="#64605f" fontSize={12} width={78} tickLine={false} />
+                <Tooltip contentStyle={tip} />
+                <Bar dataKey="units" fill="#1e1e59" radius={4} name="Unidades" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="table-wrap">
+            <table className="dense">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Saiu</th>
+                  <th>/ dia</th>
+                  <th>R$</th>
+                </tr>
+              </thead>
+              <tbody>
+                {movers.map((p, i) => (
+                  <tr key={p.id} className={i === 0 ? "row-good" : ""}>
+                    <td>
+                      <b>{p.alias}</b>
+                      <div className="sub">{i === 0 ? "líder de saída" : p.family}</div>
+                    </td>
+                    <td>{qty(p.units)}</td>
+                    <td>{qty(p.avgDaily)}</td>
+                    <td>{money(p.value)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+
+        <Panel>
+          <PanelHead
+            kicker="Validade"
+            title="O que vence / perde vida útil primeiro"
+            extra={
+              <Link className="text-link" to="/app/estoque">
+                Lotes <ArrowRight size={14} />
+              </Link>
+            }
+          />
+          <p className="fine">Hospital só recebe lote com 85% da vida. Abaixo disso, carta de troca.</p>
+          <div className="table-wrap">
+            <table className="dense">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Vida</th>
+                  <th>Validade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expiring.map((l) => {
+                  const short = l.lifeLeftPct < l.hospitalMin;
+                  return (
+                    <tr key={l.lot} className={short ? "row-hot" : ""}>
+                      <td>
+                        <b>{l.product?.alias}</b>
+                        <div className="sub">{l.lot} · {l.shelfYears} ano{l.shelfYears > 1 ? "s" : ""}</div>
+                      </td>
+                      <td>
+                        <Tone tone={short ? "critico" : "ok"}>{l.lifeLeftPct}%</Tone>
+                        <div className="sub">{short ? `abaixo de ${l.hospitalMin}%` : `ok ≥ ${l.hospitalMin}%`}</div>
+                      </td>
+                      <td>
+                        {l.exp}
+                        <div className="sub">{l.days} dias</div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+
+        <Panel>
+          <PanelHead
+            kicker="Cobertura"
+            title="O que acaba no estoque mais rápido"
+            extra={
+              <Link className="text-link" to="/app/estoque">
+                Estoque <ArrowRight size={14} />
+              </Link>
+            }
+          />
+          <p className="fine">Saldo ÷ consumo médio do dia. Quanto menor, mais perto da ruptura.</p>
+          <div className="table-wrap">
+            <table className="dense">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Saldo</th>
+                  <th>Duração</th>
+                </tr>
+              </thead>
+              <tbody>
+                {emptying.map((p) => {
+                  const tone = toneByCover(p.stock, p.minStock, p.avgDaily);
+                  const cover = daysCover(p.stock, p.avgDaily);
+                  return (
+                    <tr key={p.id} className={tone === "critico" ? "row-hot" : tone === "atencao" ? "row-warm" : ""}>
+                      <td>
+                        <b>{p.alias}</b>
+                        <div className="sub">{qty(p.avgDaily)} / dia</div>
+                      </td>
+                      <td>{qty(p.stock)}</td>
+                      <td>
+                        <b>{coverLabel(p.stock, p.avgDaily)}</b>
+                        <span className="mini-bar">
+                          <i className={tone} style={{ width: `${Math.min(100, (cover / 20) * 100)}%` }} />
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
       </div>
 
       <Panel className={`flow-panel ${livePulse ? "pulse" : ""}`}>
@@ -85,7 +302,7 @@ export function Dashboard() {
 
       <div className="split-2">
         <Panel>
-          <PanelHead kicker="14 dias" title="Receita × custo industrial" extra={<span className="hint">R$ mil</span>} />
+          <PanelHead kicker="14 dias" title="Receita da loja e do B2B" extra={<span className="hint">R$ mil</span>} />
           <div className="chart-lg">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenueSeries}>
@@ -94,17 +311,12 @@ export function Dashboard() {
                     <stop offset="0%" stopColor="#1e1e59" stopOpacity={0.35} />
                     <stop offset="100%" stopColor="#1e1e59" stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#9e0039" stopOpacity={0.22} />
-                    <stop offset="100%" stopColor="#9e0039" stopOpacity={0} />
-                  </linearGradient>
                 </defs>
                 <CartesianGrid stroke="#e5e5e5" vertical={false} />
                 <XAxis dataKey="day" stroke="#64605f" fontSize={11} tickLine={false} />
                 <YAxis stroke="#64605f" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={tip} />
                 <Area type="monotone" dataKey="receita" stroke="#1e1e59" fill="url(#gR)" strokeWidth={2} />
-                <Area type="monotone" dataKey="custo" stroke="#9e0039" fill="url(#gC)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>

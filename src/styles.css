@@ -347,7 +347,7 @@ p { margin: 0; }
     var(--panel);
 }
 .health > * { min-width: 0; }
-.flow { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; min-width: 0; overflow: hidden; }
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; min-width: 0; overflow: hidden; }
 .flow-step { min-width: 0; }
 .health h3 { font-size: 26px; margin-bottom: 8px; }
 .health p { color: var(--muted); line-height: 1.55; overflow-wrap: anywhere; }
