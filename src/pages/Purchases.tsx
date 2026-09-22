@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { buyFlow, futureChannels, needSeeds, purchaseHistory } from "../data/purchases";
 import { useData } from "../state/DataContext";
 import { coverLabel, money, pct, qty } from "../lib/format";
@@ -24,6 +24,9 @@ export function Purchases() {
   const { products, materials, orders, purchaseRequests, createPurchase } = useData();
   const [needId, setNeedId] = useState(needSeeds[0].id);
   const [mode, setMode] = useState<CompareMode>("valor");
+  const [pickedId, setPickedId] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [draftId, setDraftId] = useState<string | null>(null);
 
   const needs = useMemo(
     () =>
@@ -38,9 +41,31 @@ export function Purchases() {
 
   const selected = needs.find((n) => n.id === needId) ?? needs[0];
   const ranked = rankQuotes(quotesFor(selected.materialId), selected.buy, selected.rupture);
-  const highlight = pickByMode(ranked, mode);
+  const recommended = pickByMode(ranked, mode);
+  const picked = ranked.find((r) => r.quote.id === pickedId) ?? recommended;
   const cheapest = ranked.find((r) => r.cheapest)!;
   const requested = purchaseRequests.find((p) => p.materialId === selected.materialId);
+  const draft = ranked.find((r) => r.quote.id === draftId) ?? recommended;
+  const overridden = picked.quote.id !== recommended.quote.id;
+
+  useEffect(() => {
+    if (!modalOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [modalOpen]);
+
+  const openPicker = (id: string) => {
+    setDraftId(id);
+    setModalOpen(true);
+  };
+
+  const confirmPick = () => {
+    if (draft) setPickedId(draft.quote.id);
+    setModalOpen(false);
+  };
 
   const recommendCopy = buildCopy(selected.material.name, selected.buy, selected.rupture, ranked);
 
@@ -75,7 +100,10 @@ export function Purchases() {
               <button
                 key={n.id}
                 className={`need-card ${n.id === selected.id ? "on" : ""} ${n.priority}`}
-                onClick={() => setNeedId(n.id)}
+                onClick={() => {
+                  setNeedId(n.id);
+                  setPickedId(null);
+                }}
               >
                 <div className="need-top">
                   <Tone tone={n.priority === "alta" ? "critico" : "atencao"}>{n.priority}</Tone>
@@ -144,20 +172,29 @@ export function Purchases() {
 
       <div className="filter-row">
         {modes.map((m) => (
-          <button key={m.id} className={`chip ${mode === m.id ? "on" : ""}`} onClick={() => setMode(m.id)}>
+          <button
+            key={m.id}
+            className={`chip ${mode === m.id ? "on" : ""}`}
+            onClick={() => {
+              setMode(m.id);
+              setPickedId(null);
+            }}
+          >
             {m.label}
           </button>
         ))}
-        <span className="hint">{ranked.length} fornecedores encontrados · origem mista</span>
+        <span className="hint">{ranked.length} fornecedores · clique no card para escolher</span>
       </div>
 
       <div className="vendor-grid">
         {ranked.map((r) => {
-          const active = r.quote.id === highlight.quote.id;
+          const active = r.quote.id === picked.quote.id;
           return (
-            <article
+            <button
+              type="button"
               key={r.quote.id}
               className={`panel pad vendor ${active ? "active" : ""} ${r.bestValue ? "value" : ""}`}
+              onClick={() => openPicker(r.quote.id)}
             >
               <div className="vendor-top">
                 <p className="kicker">{r.quote.origin}</p>
@@ -212,7 +249,16 @@ export function Purchases() {
                 <span>Total da compra</span>
                 <b>{money(r.total)}</b>
               </div>
-            </article>
+              <span className={`vendor-pick ${active ? "on" : ""}`}>
+                {active ? (
+                  <>
+                    <Check size={14} /> Selecionado
+                  </>
+                ) : (
+                  "Clique para escolher"
+                )}
+              </span>
+            </button>
           );
         })}
       </div>
@@ -220,16 +266,22 @@ export function Purchases() {
       <div className="ai-buy">
         <div>
           <p className="kicker">
-            <Sparkles size={12} /> Recomendação da IA · {modes.find((m) => m.id === mode)?.label}
+            <Sparkles size={12} /> {overridden ? "Sua escolha" : `Recomendação da IA · ${modes.find((m) => m.id === mode)?.label}`}
           </p>
           <h3>
-            {mode === "valor" ? "Melhor custo-benefício" : modes.find((m) => m.id === mode)?.label}:{" "}
-            {highlight.quote.supplierName}
+            {overridden ? "Fornecedor selecionado" : mode === "valor" ? "Melhor custo-benefício" : modes.find((m) => m.id === mode)?.label}:{" "}
+            {picked.quote.supplierName}
           </h3>
-          <p>{mode === "valor" ? recommendCopy.body : altCopy(mode, highlight, cheapest, selected.buy)}</p>
+          <p>
+            {overridden
+              ? `Você escolheu ${picked.quote.supplierName} (${money(picked.total)}, ${picked.quote.leadDays} ${picked.quote.leadDays === 1 ? "dia" : "dias"}). A IA, no critério ${modes.find((m) => m.id === mode)?.label?.toLowerCase()}, apontava ${recommended.quote.supplierName}.`
+              : mode === "valor"
+                ? recommendCopy.body
+                : altCopy(mode, recommended, cheapest, selected.buy)}
+          </p>
           <p className="hint">
             Economia vs. fornecedor atual Lanxess / cadastro: o motor usa total com frete, não só o unitário.
-            Delta vs. mais barato: {money(highlight.total - cheapest.total, true)}.
+            Delta vs. mais barato: {money(picked.total - cheapest.total, true)}.
           </p>
         </div>
         <button
@@ -239,11 +291,11 @@ export function Purchases() {
             createPurchase({
               materialId: selected.materialId,
               materialName: selected.material.name,
-              quoteId: highlight.quote.id,
-              supplierName: highlight.quote.supplierName,
+              quoteId: picked.quote.id,
+              supplierName: picked.quote.supplierName,
               qty: selected.buy,
-              total: highlight.total,
-              leadDays: highlight.quote.leadDays,
+              total: picked.total,
+              leadDays: picked.quote.leadDays,
             })
           }
         >
@@ -318,6 +370,55 @@ export function Purchases() {
           </div>
         </Panel>
       </div>
+
+      {modalOpen ? (
+        <div className="modal-back" onClick={() => setModalOpen(false)}>
+          <div
+            className="modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pick-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="kicker">Comparar e escolher</p>
+            <h2 id="pick-title">Qual fornecedor você quer?</h2>
+            <p className="fine">
+              {qty(selected.buy)} {selected.material.unit} de {selected.material.name}. A IA sugere{" "}
+              {recommended.quote.supplierName} — você pode trocar.
+            </p>
+            <div className="pick-list">
+              {ranked.map((r) => {
+                const on = r.quote.id === draft.quote.id;
+                return (
+                  <button
+                    type="button"
+                    key={r.quote.id}
+                    className={`pick-opt ${on ? "on" : ""}`}
+                    onClick={() => setDraftId(r.quote.id)}
+                  >
+                    <span>
+                      <strong>{r.quote.supplierName}</strong>
+                      <small>
+                        {r.quote.city} · {r.quote.origin} · {r.quote.leadDays}{" "}
+                        {r.quote.leadDays === 1 ? "dia" : "dias"} · qualidade {r.quote.quality.toLocaleString("pt-BR")}/5
+                      </small>
+                    </span>
+                    <b>{money(r.total)}</b>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="secondary" onClick={() => setModalOpen(false)}>
+                Cancelar
+              </button>
+              <button type="button" className="primary" onClick={confirmPick}>
+                <Check size={16} /> Usar {draft.quote.supplierName}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
