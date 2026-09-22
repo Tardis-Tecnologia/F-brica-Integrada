@@ -140,18 +140,18 @@ export function Logo({ size = 36 }: { size?: number }) {
       fill="none"
       aria-hidden
     >
-      <rect width="64" height="64" rx="10" fill="#0B1014" />
+      <rect width="64" height="64" rx="10" fill="#1e1e59" />
       <path
-        d="M10 46V22l22-10 22 10v24H10z"
-        stroke="#3d7ea6"
-        strokeWidth="2.2"
+        d="M18 18h16l12 14-12 14H18l12-14L18 18z"
+        fill="#fff"
       />
       <path
-        d="M22 46V30h8v16M34 46V34h8v12"
-        stroke="#3EE0C4"
+        d="M30 18h16v28H30"
+        fill="none"
+        stroke="#fff"
         strokeWidth="2.2"
+        opacity="0.45"
       />
-      <circle cx="32" cy="22" r="3" fill="#3d7ea6" />
     </svg>
   );
 }

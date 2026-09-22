@@ -57,11 +57,11 @@ export function Costs() {
                     <stop offset="100%" stopColor="#E24B4A" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#24313c" vertical={false} />
-                <XAxis dataKey="day" stroke="#8b9bab" fontSize={11} tickLine={false} />
-                <YAxis stroke="#8b9bab" fontSize={11} tickLine={false} axisLine={false} />
+                <CartesianGrid stroke="#e5e5e5" vertical={false} />
+                <XAxis dataKey="day" stroke="#64605f" fontSize={11} tickLine={false} />
+                <YAxis stroke="#64605f" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={tip} />
-                <Area type="monotone" dataKey="custo" stroke="#3EE0C4" fill="transparent" strokeWidth={2} />
+                <Area type="monotone" dataKey="custo" stroke="#1e1e59" fill="transparent" strokeWidth={2} />
                 <Area type="monotone" dataKey="desperdicio" stroke="#E24B4A" fill="url(#gW)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
@@ -72,12 +72,12 @@ export function Costs() {
           <div className="chart-lg">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={costByProduct}>
-                <CartesianGrid stroke="#24313c" vertical={false} />
-                <XAxis dataKey="alias" stroke="#8b9bab" fontSize={12} tickLine={false} />
-                <YAxis stroke="#8b9bab" fontSize={11} tickLine={false} axisLine={false} />
+                <CartesianGrid stroke="#e5e5e5" vertical={false} />
+                <XAxis dataKey="alias" stroke="#64605f" fontSize={12} tickLine={false} />
+                <YAxis stroke="#64605f" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={tip} />
-                <Bar dataKey="preco" fill="#C4A35A" radius={4} />
-                <Bar dataKey="custo" fill="#3EE0C4" radius={4} />
+                <Bar dataKey="preco" fill="#1e1e59" radius={4} />
+                <Bar dataKey="custo" fill="#9e0039" radius={4} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -123,11 +123,11 @@ export function Costs() {
           <div className="chart-md">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={marginImpact} layout="vertical">
-                <CartesianGrid stroke="#24313c" horizontal={false} />
-                <XAxis type="number" stroke="#8b9bab" fontSize={11} />
-                <YAxis type="category" dataKey="alias" stroke="#8b9bab" fontSize={12} width={28} />
+                <CartesianGrid stroke="#e5e5e5" horizontal={false} />
+                <XAxis type="number" stroke="#64605f" fontSize={11} />
+                <YAxis type="category" dataKey="alias" stroke="#64605f" fontSize={12} width={28} />
                 <Tooltip contentStyle={tip} />
-                <Bar dataKey="margem" fill="#3EE0C4" radius={4} />
+                <Bar dataKey="margem" fill="#1e1e59" radius={4} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -143,8 +143,9 @@ export function Costs() {
 }
 
 const tip = {
-  background: "#121a21",
-  border: "1px solid #2a3a46",
+  background: "#ffffff",
+  border: "1px solid #e5e5e5",
+  color: "#25282a",
   borderRadius: 8,
   fontSize: 12,
 };

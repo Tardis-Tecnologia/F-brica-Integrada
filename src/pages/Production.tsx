@@ -39,12 +39,12 @@ export function Production() {
           <div className="chart-md">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={wasteByLine}>
-                <CartesianGrid stroke="#24313c" vertical={false} />
-                <XAxis dataKey="line" stroke="#8b9bab" fontSize={12} tickLine={false} />
-                <YAxis stroke="#8b9bab" fontSize={11} tickLine={false} axisLine={false} />
+                <CartesianGrid stroke="#e5e5e5" vertical={false} />
+                <XAxis dataKey="line" stroke="#64605f" fontSize={12} tickLine={false} />
+                <YAxis stroke="#64605f" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={tip} />
-                <Bar dataKey="anterior" fill="#3a4b58" radius={4} />
-                <Bar dataKey="atual" fill="#C4A35A" radius={4} />
+                <Bar dataKey="anterior" fill="#cccccc" radius={4} />
+                <Bar dataKey="atual" fill="#1e1e59" radius={4} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -129,8 +129,9 @@ export function Production() {
 }
 
 const tip = {
-  background: "#121a21",
-  border: "1px solid #2a3a46",
+  background: "#ffffff",
+  border: "1px solid #e5e5e5",
+  color: "#25282a",
   borderRadius: 8,
   fontSize: 12,
 };

@@ -119,7 +119,7 @@ export function Commercial() {
             <ul className="legend">
               {prospectMix.map((c) => (
                 <li key={c.name}>
-                  <i style={{ background: c.name === "WhatsApp" ? "#3dbe7a" : c.name === "E-mail" ? "#6ea8d8" : "#3d7ea6" }} />
+                  <i style={{ background: c.name === "WhatsApp" ? "#25d366" : c.name === "E-mail" ? "#0d3d73" : "#1e1e59" }} />
                   {c.name}
                   <b>{c.value}%</b>
                 </li>

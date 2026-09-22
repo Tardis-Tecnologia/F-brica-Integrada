@@ -20,7 +20,7 @@ import { coverLabel, money, pct, qty, toneByCover } from "../lib/format";
 import { Kpi, Panel, PanelHead, Tone } from "../components/ui";
 import { ArrowRight } from "lucide-react";
 
-const pieColors = ["#C4A35A", "#3EE0C4", "#6EA8D8", "#8B9BAB"];
+const pieColors = ["#1e1e59", "#0d3d73", "#9e0039", "#969696"];
 
 export function Dashboard() {
   const { products, materials, recs, alerts, kpis, livePulse } = useData();
@@ -91,20 +91,20 @@ export function Dashboard() {
               <AreaChart data={revenueSeries}>
                 <defs>
                   <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C4A35A" stopOpacity={0.45} />
-                    <stop offset="100%" stopColor="#C4A35A" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#1e1e59" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#1e1e59" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3EE0C4" stopOpacity={0.28} />
-                    <stop offset="100%" stopColor="#3EE0C4" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#9e0039" stopOpacity={0.22} />
+                    <stop offset="100%" stopColor="#9e0039" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#24313c" vertical={false} />
-                <XAxis dataKey="day" stroke="#8b9bab" fontSize={11} tickLine={false} />
-                <YAxis stroke="#8b9bab" fontSize={11} tickLine={false} axisLine={false} />
+                <CartesianGrid stroke="#e5e5e5" vertical={false} />
+                <XAxis dataKey="day" stroke="#64605f" fontSize={11} tickLine={false} />
+                <YAxis stroke="#64605f" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={tip} />
-                <Area type="monotone" dataKey="receita" stroke="#C4A35A" fill="url(#gR)" strokeWidth={2} />
-                <Area type="monotone" dataKey="custo" stroke="#3EE0C4" fill="url(#gC)" strokeWidth={2} />
+                <Area type="monotone" dataKey="receita" stroke="#1e1e59" fill="url(#gR)" strokeWidth={2} />
+                <Area type="monotone" dataKey="custo" stroke="#9e0039" fill="url(#gC)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -364,8 +364,9 @@ function Meter({
 }
 
 const tip = {
-  background: "#121a21",
-  border: "1px solid #2a3a46",
+  background: "#ffffff",
+  border: "1px solid #e5e5e5",
   borderRadius: 8,
   fontSize: 12,
+  color: "#25282a",
 };
