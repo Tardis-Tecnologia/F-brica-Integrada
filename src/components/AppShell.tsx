@@ -11,15 +11,15 @@ const titles: Record<string, { title: string; subtitle: string }> = {
   },
   "/app/vendas": {
     title: "Vendas e pedidos",
-    subtitle: "Pedidos da loja Tray, SINK, Comprasnet e representantes",
+    subtitle: "Pedido → estoque → compra · sede ≠ entrega · frete % da venda",
   },
   "/app/estoque": {
     title: "Estoque e insumos",
-    subtitle: "Saldo, cobertura e consumo cruzados com a demanda real",
+    subtitle: "Reservado vs NF-e · lote 85% · catálogo por segmento e Tray",
   },
   "/app/compras": {
     title: "Compras inteligentes",
-    subtitle: "A IA calcula o que falta, compara fornecedores e recomenda a melhor compra — não a mais barata",
+    subtitle: "WhatsApp por categoria · última negociação · não o preço de tabela",
   },
   "/app/producao": {
     title: "Produção",

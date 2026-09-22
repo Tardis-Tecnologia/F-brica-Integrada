@@ -75,6 +75,9 @@ export function Commercial() {
                         <div className="sub">
                           {a.product} · última {a.lastBuy} · {money(a.avgTicket)}
                         </div>
+                        {a.risk ? <div className="sub">{a.risk}</div> : null}
+                        {a.shipTo ? <div className="sub">Fatura {a.hq} · entrega {a.shipTo}</div> : null}
+                        {a.holdPrice ? <div className="sub">{a.holdPrice}</div> : null}
                       </td>
                       <td>
                         <Tone tone={a.abc === "A" ? "critico" : a.abc === "B" ? "atencao" : "info"}>{a.abc}</Tone>

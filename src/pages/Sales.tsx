@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useData } from "../state/DataContext";
 import { money, qty } from "../lib/format";
 import { Panel, PanelHead, Tone, productById } from "../components/ui";
+import { orderSteps, shipDeals } from "../data/opsExtra";
 
 const channels = ["Todos", "E-commerce", "ERP", "Licitação", "Representante"] as const;
 
@@ -26,6 +27,20 @@ export function Sales() {
           {list.length} pedidos · {money(total)}
         </span>
       </div>
+
+      <Panel className="flow-panel">
+        <PanelHead kicker="Como o pedido anda" title="Cliente pede → tem estoque? → compra se falta → vendeu × a pagar" />
+        <div className="flow">
+          {orderSteps.map((s, i) => (
+            <div key={s.n} className="flow-step">
+              <span>{s.n}</span>
+              <strong>{s.title}</strong>
+              <small>{s.source}</small>
+              {i < orderSteps.length - 1 ? <i /> : null}
+            </div>
+          ))}
+        </div>
+      </Panel>
 
       <div className="split-4 mini-stats">
         <Stat n="E-commerce" d="Loja Tray flind.com.br · pedido já baixa estoque e dispara o SINK" />
@@ -88,6 +103,48 @@ export function Sales() {
                   </tr>
                 );
               })}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <Panel pad={false}>
+        <div className="pad">
+          <PanelHead
+            kicker="Frete e CNPJ"
+            title="Sede ≠ unidade de entrega · quem paga o frete · fila de amanhã vs 5 dias"
+          />
+          <p className="fine">
+            Grupo hospitalar fatura num CNPJ e recebe em outro. Frete entra como % da venda.
+            Confirma hoje, sai amanhã. Atrasa, vai para o fim da fila.
+          </p>
+        </div>
+        <div className="table-wrap">
+          <table className="dense">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Fatura</th>
+                <th>Entrega</th>
+                <th>Frete</th>
+                <th>Prazo</th>
+                <th>Preço travado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shipDeals.map((d) => (
+                <tr key={d.id}>
+                  <td><b>{d.client}</b></td>
+                  <td>{d.hq}</td>
+                  <td>{d.shipTo}</td>
+                  <td>
+                    {d.freightPct.toLocaleString("pt-BR")}% da venda
+                    <div className="sub">{d.freightPayer}</div>
+                  </td>
+                  <td>{d.sla}</td>
+                  <td className="muted">{d.hold}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

@@ -1,3 +1,4 @@
+.tmp-video
 node_modules
 dist
 .DS_Store

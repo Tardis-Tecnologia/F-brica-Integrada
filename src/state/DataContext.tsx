@@ -32,6 +32,7 @@ import {
   type Machine,
 } from "../data/compliance";
 import { accountsSeed, cycleFlag, type Account } from "../data/crm";
+import { rfqGroups } from "../data/opsExtra";
 
 export type Toast = { id: string; text: string } | null;
 
@@ -65,6 +66,7 @@ type DataCtx = {
   refreshCertificates: () => void;
   accounts: Account[];
   fireRepurchase: (id: string, target: "whatsapp" | "team" | "both") => void;
+  fireRfq: (groupId: string) => void;
   ping: (text: string) => void;
   clearToast: () => void;
 };
@@ -141,6 +143,26 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setToast({
       id: `crm-${id}`,
       text: target === "team" ? toTeam : target === "whatsapp" ? toClient : `${toClient} ${toTeam}`,
+    });
+  };
+
+  const fireRfq = (groupId: string) => {
+    const g = rfqGroups.find((x) => x.id === groupId);
+    if (!g) return;
+    setAlerts((a) => [
+      {
+        id: `al-rfq-${Date.now()}`,
+        time: nowClock(),
+        tone: "info",
+        title: `Cotação WhatsApp · ${g.label}`,
+        detail: `Disparo para ${g.suppliers.join(", ")}: “${g.ask}” Preço de tabela não vale — a lista muda todo dia.`,
+        source: "Compras · RFQ WhatsApp",
+      },
+      ...a,
+    ]);
+    setToast({
+      id: `rfq-${g.id}`,
+      text: `WhatsApp enviado a ${g.suppliers.length} fornecedores de ${g.label.toLowerCase()}. Pedindo estoque e preço negociado.`,
     });
   };
 
@@ -329,6 +351,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       refreshCertificates,
       accounts,
       fireRepurchase,
+      fireRfq,
       createPurchase,
       ping: (text: string) => setToast({ id: `n-${Date.now()}`, text }),
       clearToast: () => setToast(null),

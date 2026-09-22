@@ -14,6 +14,8 @@ export const chips = [
   "Quais certidões vencem?",
   "Tem máquina em manutenção?",
   "Quem está no ciclo de recompra?",
+  "Dispara cotação de luva no WhatsApp?",
+  "Lote abaixo de 85% pode ir pro hospital?",
 ];
 
 export function answerQuestion(
@@ -29,6 +31,20 @@ export function answerQuestion(
   const pig = materials.find((m) => m.id === "pig-preto")!;
   const coverA = coverLabel(a.stock, a.avgDaily);
   const coverE = coverLabel(e.stock, e.avgDaily);
+
+  if (q.includes("whatsapp") && (q.includes("luva") || q.includes("cota") || q.includes("rfq") || q.includes("dispara"))) {
+    return {
+      title: "Luva dispara para Descarpack, Medix e DKP — no WhatsApp, não em portal.",
+      body: "Pergunta informal: “tem luva látex G no estoque? Qual preço você consegue colocar — não o de tabela. Qtd muda o valor.”\n\n10 a 20 cotações por dia. Foto + estoque + preço negociado. Medix e Descarpack vendem o mesmo SKU; volume fecha o valor.\n\nAbra Compras IA e clique em Luva · 3 fornecedores.",
+    };
+  }
+
+  if (q.includes("85") || q.includes("lote") || q.includes("validade") || q.includes("vida útil") || q.includes("vida util")) {
+    return {
+      title: "Hospital só recebe lote com 85% da vida útil. Abaixo disso, carta de troca.",
+      body: "Toalet 10 (lote LT-2408-TOA): 82% — abaixo. Máscara 67% e avental 66% também pedem carta. Luva 88% e Toalet 24 (5 anos) passam.\n\nSaldo de prateleira ≠ saldo real: reservado some antes da NF-e. Caixa fechada, sem fracionar.\n\nAbra Estoque → lote, caixa e validade.",
+    };
+  }
 
   if (q.includes("recompra") || q.includes("ciclo") || q.includes("abc") || q.includes("prospec") || q.includes("comercial")) {
     return {
@@ -67,7 +83,7 @@ export function answerQuestion(
   ) {
     return {
       title: "Sim. O gargalo de compra é o filme PE — e o menor preço não serve.",
-      body: `${pig.name}: ${qty(pig.stock)} kg / mínimo ${qty(pig.minStock)} kg · ${coverLabel(pig.stock, pig.avgDaily)} de cobertura.\n\nA campanha de 1.200 kits ${a.alias} pede 48 kg no BOM, e a Linha Kit já consome o mesmo filme. A IA calculou 500 kg para os próximos 7 dias.\n\nFornecedores comparados:\n• Plásticos Baixada · mais barato · 7 dias · chega depois da ruptura.\n• Filme Médico SP · 2 dias · qualidade 4,8/5 · melhor custo-benefício.\n• Plásticos Tijuca (cadastro) · 4 dias · no limite da cobertura.\n• PoliSaúde Express · 1 dia · a mais rápida, mais cara.\n\nRecomendação: Filme Médico SP. Custa cerca de R$ 530 a mais que a opção mais barata, mas entrega dois dias antes da ruptura. Abra Compras Inteligentes para gerar a SC.`,
+      body: `${pig.name}: ${qty(pig.stock)} kg / mínimo ${qty(pig.minStock)} kg · ${coverLabel(pig.stock, pig.avgDaily)} de cobertura.\n\nA campanha de 1.200 kits ${a.alias} pede 48 kg no BOM, e a Linha Kit já consome o mesmo filme. A IA calculou 500 kg para os próximos 7 dias.\n\nFornecedores comparados:\n• Plásticos Baixada · mais barato · 7 dias · chega depois da ruptura. Última negociação R$ 16,80 — sugiro negociar.\n• Filme Médico SP · 2 dias · qualidade 4,8/5 · melhor custo-benefício.\n• Plásticos Tijuca (cadastro) · 4 dias · no limite da cobertura.\n• PoliSaúde Express · 1 dia · a mais rápida, mais cara.\n\nTabela de plástico muda todo dia. Este pedido ainda fecha no preço antigo; o próximo, não. Abra Compras IA para disparar o WhatsApp ou gerar a SC.`,
     };
   }
 

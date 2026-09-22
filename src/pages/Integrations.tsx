@@ -9,7 +9,8 @@ export function Integrations() {
     <div className="stack">
       <p className="lead">
         Tudo aqui é mock. A Fábrica Integrada não substitui Tray nem SINK: ela
-        orquestra o fluxo Tray → FI → SINK → NF-e → expedição → WhatsApp.
+        puxa a cotação que o SINK já fez e acrescenta a conversa — WhatsApp do
+        fornecedor, foto, preço negociado. Fiscal fica de fora do v1.
       </p>
 
       <div className="sync-strip">

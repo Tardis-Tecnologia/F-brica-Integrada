@@ -20,6 +20,8 @@ export type Quote = {
   payment: string;
   freight: number;
   orders12m: number;
+  lastNegotiated?: number;
+  lastNegotiatedDate?: string;
 };
 
 export type NeedSeed = {
@@ -90,6 +92,8 @@ export const quotes: Quote[] = [
     payment: "14 dias",
     freight: 380,
     orders12m: 4,
+    lastNegotiated: 16.8,
+    lastNegotiatedDate: "12/08",
   },
   {
     id: "q-pig-basf",
@@ -106,6 +110,8 @@ export const quotes: Quote[] = [
     payment: "28 dias",
     freight: 510,
     orders12m: 11,
+    lastNegotiated: 18.35,
+    lastNegotiatedDate: "28/08",
   },
   {
     id: "q-pig-lanxess",
@@ -122,6 +128,8 @@ export const quotes: Quote[] = [
     payment: "30 dias",
     freight: 420,
     orders12m: 18,
+    lastNegotiated: 18.9,
+    lastNegotiatedDate: "03/09",
   },
   {
     id: "q-pig-cromex",

@@ -3,16 +3,22 @@ import { coverLabel, daysCover, money, qty, toneByCover } from "../lib/format";
 import { Panel, PanelHead, Tone } from "../components/ui";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { catalogItems, lotRows } from "../data/opsExtra";
+
+const segments = ["Todos", "Hospitalar", "Profissional", "Ferida"] as const;
 
 export function Inventory() {
   const { products, materials } = useData();
+  const [seg, setSeg] = useState<(typeof segments)[number]>("Todos");
+  const catalog = catalogItems.filter((c) => seg === "Todos" || c.segment === seg);
 
   return (
     <div className="stack">
       <p className="lead">
-        Produto acabado e insumos no mesmo quadro. Quando a loja Tray baixa o
-        Toalet 10, a plataforma já verifica se há filme PE e gel para produzir de novo
-        — e abre a necessidade em Compras Inteligentes.
+        Produto acabado e insumos no mesmo quadro. Reservado some do saldo real —
+        a NF-e ainda não. Catálogo por segmento, foto, NCM, caixa e peso. Tray só
+        sobe o que justifica o frete.
       </p>
       <Panel pad={false}>
         <div className="pad">
@@ -59,7 +65,12 @@ export function Inventory() {
                         </span>
                       </div>
                     </td>
-                    <td>{p.line}</td>
+                    <td>
+                      {p.line}
+                      <div className="sub">
+                        piso {money(p.unitCost, true)} · até onde negociar {money(p.unitCost * 1.15, true)}
+                      </div>
+                    </td>
                     <td>
                       <Tone tone={tone}>
                         {tone === "critico" ? "Crítico" : tone === "atencao" ? "Atenção" : "Estável"}
@@ -70,6 +81,90 @@ export function Inventory() {
               })}
             </tbody>
           </table>
+        </div>
+      </Panel>
+
+      <Panel pad={false}>
+        <div className="pad">
+          <PanelHead
+            kicker="Lote, caixa e validade"
+            title="O que o hospital pergunta na hora — e a regra dos 85%"
+          />
+          <p className="fine">
+            Cliente hospitalar só recebe lote com pelo menos 85% da vida útil. Abaixo disso, carta de
+            compromisso de troca. Caixa fechada — não fracionar.
+          </p>
+        </div>
+        <div className="table-wrap">
+          <table className="dense">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Lote</th>
+                <th>Fab. / val.</th>
+                <th>Vida útil</th>
+                <th>Cx</th>
+                <th>Reservado</th>
+                <th>Margem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lotRows.map((l) => {
+                const p = products.find((x) => x.id === l.productId);
+                const short = l.lifeLeftPct < l.hospitalMin;
+                return (
+                  <tr key={l.lot} className={short ? "row-hot" : ""}>
+                    <td>
+                      <b>{p?.alias}</b>
+                      <div className="sub">{p?.name}</div>
+                    </td>
+                    <td className="mono">{l.lot}</td>
+                    <td>
+                      {l.mfg}
+                      <div className="sub">val. {l.exp} · {l.shelfYears} ano{l.shelfYears > 1 ? "s" : ""}</div>
+                    </td>
+                    <td>
+                      <Tone tone={short ? "critico" : "ok"}>{l.lifeLeftPct}%</Tone>
+                      <div className="sub">{short ? `abaixo de ${l.hospitalMin}% · carta de troca` : `ok para hospital (≥ ${l.hospitalMin}%)`}</div>
+                    </td>
+                    <td>{l.boxQty} un/cx</td>
+                    <td>
+                      {l.reserved ? `${l.reserved} p/ entrega` : "—"}
+                      <div className="sub">saldo real {qty((p?.stock ?? 0) - l.reserved)}</div>
+                    </td>
+                    <td>{l.marginPct}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <Panel>
+        <PanelHead kicker="Catálogo segmentado" title="Foto, ficha, NCM, caixa e o que sobe na Tray" />
+        <div className="filter-row" style={{ marginBottom: 12 }}>
+          {segments.map((s) => (
+            <button key={s} className={`chip ${seg === s ? "on" : ""}`} type="button" onClick={() => setSeg(s)}>
+              {s}
+            </button>
+          ))}
+        </div>
+        <div className="vendor-grid">
+          {catalog.map((c) => {
+            const p = products.find((x) => x.id === c.productId);
+            return (
+              <article key={c.productId} className="panel pad vendor">
+                <p className="kicker">{c.segment}</p>
+                <h3>{p?.alias}</h3>
+                <p className="fine">{c.photo}</p>
+                <p className="fine">{c.tech}</p>
+                <p className="fine">NCM {c.ncm} · {c.boxQty} un/cx · {c.weightKg} kg</p>
+                <Tone tone={c.tray ? "ok" : "atencao"}>{c.tray ? "Tray" : "Fora da Tray"}</Tone>
+                <p className="fine">{c.trayWhy}</p>
+              </article>
+            );
+          })}
         </div>
       </Panel>
 

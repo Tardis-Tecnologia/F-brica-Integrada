@@ -18,6 +18,10 @@ export type Account = {
   email: string;
   stockHint: string;
   alerted: boolean;
+  risk?: string;
+  hq?: string;
+  shipTo?: string;
+  holdPrice?: string;
 };
 
 export type Lead = {
@@ -60,6 +64,9 @@ export const accountsSeed: Account[] = [
     email: "compras@saovicente.med.br",
     stockHint: "Pelo ritmo de 40 em 40 dias, o CME deve estar no fim do kit.",
     alerted: false,
+    hq: "Sede Botafogo",
+    shipTo: "CME Urca",
+    holdPrice: "Preço de agosto neste pedido. No próximo não seguro.",
   },
   {
     id: "ac-samu",
@@ -77,6 +84,9 @@ export const accountsSeed: Account[] = [
     email: "suprimentos@samu.rio.gov.br",
     stockHint: "Compra a cada 45 dias. Já passou 7 dias do ciclo — risco de ruptura na base.",
     alerted: false,
+    hq: "CNPJ prefeitura",
+    shipTo: "Base Leblon",
+    holdPrice: "Volume fecha o preço. Caixa avulsa sobe.",
   },
   {
     id: "ac-copa",
@@ -145,6 +155,7 @@ export const accountsSeed: Account[] = [
     email: "sesmt@litoralcarioca.com",
     stockHint: "Canteiro some 50 dias. Já passou o ciclo. SESMT só responde WhatsApp.",
     alerted: false,
+    risk: "Atrasa muito · juros comem a margem. Vale continuar?",
   },
 ];
 

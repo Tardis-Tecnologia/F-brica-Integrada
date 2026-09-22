@@ -11,7 +11,8 @@ import {
   type CompareMode,
 } from "../lib/purchases";
 import { Panel, PanelHead, Tone } from "../components/ui";
-import { Check, Sparkles } from "lucide-react";
+import { Check, MessageCircle, Sparkles } from "lucide-react";
+import { rfqGroups } from "../data/opsExtra";
 
 const modes: { id: CompareMode; label: string }[] = [
   { id: "valor", label: "Melhor custo-benefício" },
@@ -21,7 +22,7 @@ const modes: { id: CompareMode; label: string }[] = [
 ];
 
 export function Purchases() {
-  const { products, materials, orders, purchaseRequests, createPurchase } = useData();
+  const { products, materials, orders, purchaseRequests, createPurchase, fireRfq } = useData();
   const [needId, setNeedId] = useState(needSeeds[0].id);
   const [mode, setMode] = useState<CompareMode>("valor");
   const [pickedId, setPickedId] = useState<string | null>(null);
@@ -72,8 +73,9 @@ export function Purchases() {
   return (
     <div className="stack">
       <p className="lead">
-        A IA não escolhe o menor preço. Ela cruza prazo com a data de ruptura, qualidade,
-        atraso histórico, frete e total — e recomenda a compra que não para a planta.
+        Filme de plástico muda de preço todo dia — tabela não vale. A IA cruza prazo
+        com ruptura, qualidade, atraso, frete e a última negociação. Quem compra e
+        vende é a mesma pessoa: o piso de custo é o teto da conversa.
       </p>
 
       <Panel className="flow-panel">
@@ -170,6 +172,21 @@ export function Purchases() {
         </div>
       </div>
 
+      <Panel>
+        <PanelHead kicker="WhatsApp · sem formalização" title="Pedir cotação pelo canal que o fornecedor já usa" />
+        <p className="fine">
+          10 a 20 perguntas por dia. Foto + “tem no estoque? a que preço você coloca?” — não o de tabela.
+          Luva dispara para quem vende luva. Máscara, para Medix e Descarpack.
+        </p>
+        <div className="filter-row" style={{ marginTop: 12 }}>
+          {rfqGroups.map((g) => (
+            <button key={g.id} className="chip" type="button" onClick={() => fireRfq(g.id)}>
+              <MessageCircle size={14} /> {g.label} · {g.suppliers.length} fornecedores
+            </button>
+          ))}
+        </div>
+      </Panel>
+
       <div className="filter-row">
         {modes.map((m) => (
           <button
@@ -245,6 +262,13 @@ export function Purchases() {
                   <dd>{money(r.quote.freight)}</dd>
                 </div>
               </dl>
+              {r.quote.lastNegotiated != null ? (
+                <p className="fine" style={{ marginTop: 10 }}>
+                  {r.quote.unitPrice > r.quote.lastNegotiated + 0.05
+                    ? `Última negociação ${money(r.quote.lastNegotiated, true)} em ${r.quote.lastNegotiatedDate}. Sugiro negociar — está mais caro. Este pedido ainda fecha no preço antigo; o próximo, não.`
+                    : `Última negociação ${money(r.quote.lastNegotiated, true)} em ${r.quote.lastNegotiatedDate}. Na faixa.`}
+                </p>
+              ) : null}
               <div className="vendor-total">
                 <span>Total da compra</span>
                 <b>{money(r.total)}</b>
